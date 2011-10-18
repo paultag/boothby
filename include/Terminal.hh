@@ -1,19 +1,10 @@
 #ifndef _TERMINAL_HH_
 #define _TERMINAL_HH_ foo
 
-class TerminalChar {
-	protected:
-		unsigned char attr;
-		unsigned char cha;
-
-	public:
-		TerminalChar();
-		void setAttr( unsigned char c );
-		unsigned char getAttr();
-		
-		void setChar( unsigned char c );
-		unsigned char getChar();
-};
+typedef struct _TerminalCell {
+	unsigned char attr;
+	unsigned char ch;
+} TerminalCell;
 
 class Terminal {
 	protected:
@@ -24,9 +15,8 @@ class Terminal {
 		int cY;
 		
 		unsigned char cMode;
-
-		TerminalChar ** screen;
-
+		
+		TerminalCell ** cells;
 	public:
 		Terminal(int width, int height);
 };

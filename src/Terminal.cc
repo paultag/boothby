@@ -1,28 +1,6 @@
 #include <malloc.h>
-
+#include <iostream>
 #include "Terminal.hh"
-
-TerminalChar::TerminalChar() {
-	/*
-	 * Nothing much to do
-	 */
-}
-
-void TerminalChar::setChar( unsigned char c ) {
-	this->cha = c;
-}
-	
-void TerminalChar::setAttr( unsigned char c ) {
-	this->attr = c;
-}
-
-unsigned char TerminalChar::getChar() {
-	return this->cha;
-}
-
-unsigned char TerminalChar::getAttr() {
-	return this->attr;
-}
 
 Terminal::Terminal(int width, int height) {
 	this->width  = width;
@@ -49,13 +27,14 @@ Terminal::Terminal(int width, int height) {
 	 * 
 	 */
 	 
-	 /* OK, crap. Let's set up the screen now. Huge amount of objects
-	    are about to be new'd. */
-	
-	this->screen = (TerminalChar **)
-		malloc(sizeof(TerminalChar) * (width * height));
-	
-	for ( int ix = 0; ix < width; ++ix )
-		for ( int iy = 0; iy < height; ++iy )
-			this->screen[ix][iy] = new TerminalChar();
+	this->cells = (TerminalCell **)
+		malloc(sizeof(TerminalCell) * ( width * height ));
+	 
+	for ( int ix = 0; ix < width; ++ix ) {
+		for ( int iy = 0; iy < height; ++iy ) {
+			std::cout << ix << ", " << iy << std::endl;
+			cells[ix][iy].ch   = 0;
+			cells[ix][iy].attr = 0;
+		}
+	}
 }
