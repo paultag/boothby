@@ -16,7 +16,7 @@ Terminal::Terminal(int width, int height) {
 	this->pty    = -1;
 
 	this->special   = false;
-	this->escape    = (char *)malloc(sizeof(char) * 8); // XXX: Overflow...
+	this->escape    = (char *)malloc(sizeof(char) * 8);
 	this->escape[0] = '\0';
 
 	/* OK. This cMode can be a bit of a bear to use. Let's explain it
@@ -66,21 +66,54 @@ void Terminal::render( WINDOW * win ) {
 		}
 	}
 }
+bool Terminal::handle_escape_char( char c ) {
+	return false;
+}
+bool Terminal::handle_graph_char( char c ) {
+	
+	/* This was yanked directly from rote */
+	
+	if ( ! this->graph )
+		return false;
+	
+	char nc;
+	switch (c) {
+		case 'j':
+		case 'k':
+		case 'l':
+		case 'm':
+		case 'n':
+		case 't':
+		case 'u':
+		case 'v':
+		case 'w':
+			nc = '+';
+			break;
+		case 'x':
+			nc = '|';
+			break;
+		default:
+			nc = '%';
+			break;
+	}
 
-bool Terminal::handle_special_char( char c ) {
+	this->insert(nc); // come back at it like a mofo.
 
+	return true;
+}
+bool Terminal::handle_control_char( char c ) {
 	switch ( c ) {
-		case '\n': /* Newline */
+		case '\n': /* newline */
 			this->cX = this->width; /* XXX: Fix this hack */
 			this->advance_curs();
 			return true;
 			break;
-		case '\b': /* Backspace */
+		case '\b': /* backspace */
 			if ( this->cX )
 				this->cX--;
 			return true;
 			break;
-		case '\t': /* Tab */
+		case '\t': /* tab */
 			while (this->cX % 8)
 				this->insert(' ');
 			return true;
@@ -108,11 +141,22 @@ bool Terminal::handle_special_char( char c ) {
 			break;
 		default:
 			break;
-
 	}
 
 	// some last ditch crap 
 	if ( c < 32 )
+		return true;
+
+	return false;
+}
+
+bool Terminal::handle_special_char( char c ) {
+
+	if ( this->handle_escape_char(c) )
+		return true;
+	else if ( this->handle_graph_char(c) )
+		return true;
+	else if ( this->handle_control_char(c) )
 		return true;
 
 	return false;

@@ -23,10 +23,11 @@ class Terminal {
 		int cX;
 		int cY;
 		
-		unsigned char cMode;
-		TerminalCell * chars;
+		unsigned char   cMode;
+		TerminalCell  * chars;
 
-		char * escape;
+		char  *  escape;
+		int      maxesc;
 
 		pid_t  pty;
 		pid_t  childpid;
@@ -34,6 +35,11 @@ class Terminal {
 	/* Functions */
 
 		bool handle_special_char( char c );
+		
+		bool handle_escape_char(  char c );
+		bool handle_graph_char(   char c );
+		bool handle_control_char( char c );
+		
 		void advance_curs();
 
 	public:
