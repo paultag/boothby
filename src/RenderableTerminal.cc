@@ -4,12 +4,12 @@
 
 RenderableTerminal::RenderableTerminal( Terminal * t ) {
 	this->terminal = t;
-	int width  = t->getWidth();
-	int height = t->getHeight();
+	int width  = t->get_width();
+	int height = t->get_height();
 	this->width  = width;
 	this->height = height;
 
-	Pane * p = new Pane(4, 4, width, height );
+	Pane * p = new Pane(5, 5, width, height );
 	this->pane = p;
 }
 

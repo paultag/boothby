@@ -44,7 +44,7 @@ Terminal::Terminal(int width, int height) {
 	}
 }
 
-void Terminal::scrollUp() {
+void Terminal::scroll_up() {
 	for ( int iy = 1; iy < this->height; iy++ ) {
 		for ( int ix = 0; ix < this->width; ++ix ) {
 			int thisChar = (( this->width *   iy      ) + ix );
@@ -187,6 +187,10 @@ void Terminal::insert( char c ) {
 	this->advance_curs();
 }
 
+void Terminal::type( char c ) {
+	write(this->pty, &c, 1);
+}
+
 void Terminal::advance_curs() {
 	this->cX++;
 
@@ -197,14 +201,14 @@ void Terminal::advance_curs() {
 
 	if ( this->height <= this->cY ) {
 		this->cY = (this->height - 1);
-		this->scrollUp();
+		this->scroll_up();
 	}
 }
 
-int Terminal::getWidth() {
+int Terminal::get_width() {
 	return this->width;
 }
 
-int Terminal::getHeight() {
+int Terminal::get_height() {
 	return this->height;
 }

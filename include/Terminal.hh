@@ -39,13 +39,14 @@ class Terminal {
 	public:
 		Terminal(int width, int height);
 		void insert( char c );
-		void scrollUp();
+		void type( char c );
+		void scroll_up();
 		void render( WINDOW * win );
 		void poke();
 		pid_t fork( const char * command ); /* XXX: Protect this */
 
-		int getWidth();
-		int getHeight();
+		int get_width();
+		int get_height();
 		
 };
 
