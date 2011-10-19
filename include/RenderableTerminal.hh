@@ -16,6 +16,7 @@ class RenderableTerminal : public Renderable {
 	public:
 		RenderableTerminal( Terminal * t );
 		virtual void render();
+		void insert(unsigned char c);
 		
 };
 

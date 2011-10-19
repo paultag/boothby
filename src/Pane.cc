@@ -15,7 +15,8 @@ Pane::Pane(int x, int y, int width, int height) {
 }
 
 void Pane::draw_outline() {
-	box(this->win, 0, 0);
+	// box(this->win, 0, 0);
+	// XXX: Fix this
 }
 
 void Pane::focus() {

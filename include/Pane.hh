@@ -13,14 +13,13 @@ class Pane {
 		int width;
 		int height;
 
-	protected:
-		void draw_outline();
-
 	public:
 		Pane(int x, int y, int width, int height);
 		void focus();
 		void move_to( int x, int y );
 		void resize( int width, int height );
+		void draw_outline();
+
 		WINDOW * getWindow();
 };
 
