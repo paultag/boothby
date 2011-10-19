@@ -11,9 +11,14 @@ int main ( int argc, char ** argv ) {
 
 	update_screen();
 
-	char ch;
+	int ch;
 
 	while (( ch = getch() ) && (ch != 'q')) { 
+		// real translation, please
+
+		if ( ch == 127 )
+			ch = '\b'; // this can't be right
+
 		rt.insert(ch);
 		rt.render();
 		update_screen();

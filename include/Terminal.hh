@@ -19,6 +19,9 @@ class Terminal {
 		unsigned char cMode;
 		TerminalCell * chars;
 
+		bool handle_special_char( char c );
+		void advance_curs();
+
 	public:
 		Terminal(int width, int height);
 		void insert( char c );

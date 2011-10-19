@@ -58,7 +58,46 @@ void Terminal::render( WINDOW * win ) {
 	}
 }
 
+bool Terminal::handle_special_char( char c ) {
+
+	switch ( c ) {
+		case '\n': /* Newline */
+			this->cX = this->width; /* XXX: Fix this hack */
+			this->advance_curs();
+			return true;
+			break;
+		case '\b': /* Backspace */
+			if ( this->cX )
+				this->cX--;
+			return true;
+			break;
+		case '\t': /* Tab */
+			while (this->cX % 8)
+				this->insert(' ');
+			return true;
+			break;
+		case '\x1B': /* begin escape sequence (aborting previous one if any) */
+			break;
+		case '\x0E': /* enter graphical character mode */
+			break;
+		case '\x0F': /* exit graphical character mode */
+			break;
+		case '\x9B': /* CSI character. Equivalent to ESC [ */
+			break;
+		case '\x18': case '\x1A': /* these interrupt escape sequences */
+			break;
+		case '\a': /* bell */
+			break;
+
+	}
+
+	return false;
+}
+
 void Terminal::insert( char c ) {
+
+	if ( this->handle_special_char(c) )
+		return;
 
 	int ix = this->cX;
 	int iy = this->cY;
@@ -70,6 +109,10 @@ void Terminal::insert( char c ) {
 	int offset = (( this->width * iy ) + ix );
 
 	this->chars[offset].ch = c;
+	this->advance_curs();
+}
+
+void Terminal::advance_curs() {
 	this->cX++;
 
 	if ( this->width <= this->cX ) {
