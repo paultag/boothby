@@ -2,6 +2,7 @@
 #define _TERMINAL_HH_ foo
 
 #include <ncurses.h>
+#include <pty.h>
 
 typedef struct _TerminalCell {
 	unsigned char attr;
@@ -27,15 +28,21 @@ class Terminal {
 
 		char * escape;
 
+		pid_t  pty;
+		pid_t  childpid;
+
 	/* Functions */
 
 		bool handle_special_char( char c );
 		void advance_curs();
+
 	public:
 		Terminal(int width, int height);
 		void insert( char c );
 		void scrollUp();
 		void render( WINDOW * win );
+		void poke();
+		pid_t fork( const char * command ); /* XXX: Protect this */
 
 		int getWidth();
 		int getHeight();

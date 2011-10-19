@@ -1,7 +1,7 @@
 CXX=g++
 
 CFLAGS=-Wall
-LDFLAGS=-lncurses -lpanel
+LDFLAGS=-lncurses -lpanel -lutil
 BIN=../bin/
 INC=../include/
 

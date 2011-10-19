@@ -1,6 +1,8 @@
 #include "Terminal.hh"
 #include "RenderableTerminal.hh"
 
+#include <iostream>
+
 #include "boothby.hh"
 
 int main ( int argc, char ** argv ) {
@@ -11,17 +13,13 @@ int main ( int argc, char ** argv ) {
 
 	update_screen();
 
-	int ch;
+	t->fork("dmesg");
 
-	while (( ch = getch() ) && (ch != 'q')) { 
-		// real translation, please
-
-		if ( ch == 127 )
-			ch = '\b'; // this can't be right
-
-		rt.insert(ch);
+	while ( true ) {
+		t->poke();
 		rt.render();
 		update_screen();
+		usleep(2000);
 	}
 
 	uninit_screen();

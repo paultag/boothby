@@ -1,5 +1,7 @@
 #include <malloc.h>
 #include <iostream>
+#include <pty.h>
+#include <stdlib.h>
 
 #include "Terminal.hh"
 
@@ -11,6 +13,7 @@ Terminal::Terminal(int width, int height) {
 	this->cY     = 0;
 	this->cMode  = 0x70; // 112
 
+	this->pty    = -1;
 
 	this->special   = false;
 	this->escape    = (char *)malloc(sizeof(char) * 8); // XXX: Overflow...
@@ -88,27 +91,83 @@ bool Terminal::handle_special_char( char c ) {
 		case '\x0E': /* enter graphical character mode */
 			this->graph = true;
 			return true;
-			break;
+			break; 
 		case '\x0F': /* exit graphical character mode */
 			this->graph = false;
 			return true;
 			break;
 		case '\x9B': /* CSI character. Equivalent to ESC [ */
+			return true;
 			break;
 		case '\x18': case '\x1A': /* these interrupt escape sequences */
 			this->special = false;
+			return true;
 			break;
 		case '\a': /* bell */
+			return true;
+			break;
+		default:
 			break;
 
 	}
 
 	// some last ditch crap 
-	if ( c < 35 )
+	if ( c < 32 )
 		return true;
 
 	return false;
 }
+
+pid_t Terminal::fork( const char * command ) {
+
+	struct winsize ws;
+
+	ws.ws_row    = this->height;
+	ws.ws_col    = this->width;
+	ws.ws_xpixel = 0;
+	ws.ws_ypixel = 0;	
+
+	pid_t childpid = forkpty(&this->pty, NULL, NULL, &ws);
+	if (childpid < 0) return -1;
+
+	if (childpid == 0) {
+		setenv("TERM", "linux", 1);
+		execl("/bin/sh", "/bin/sh", "-c", command, NULL);
+		std::cerr << "Oh, crap. Failed to fork." << std::endl;
+		exit(127);
+	}
+	/* if we got here we are the parent process */
+	this->childpid = childpid;
+	return childpid;
+}
+
+void Terminal::poke() {
+	fd_set ifs;
+	struct timeval tvzero;
+	char buf[512];
+	int bytesread;
+	int n = 5; // XXX: Fix?
+
+	if (this->pty < 0)
+		return;
+	while (n--) {
+		FD_ZERO(&ifs);
+		FD_SET(this->pty, &ifs);
+
+		tvzero.tv_sec  = 0;
+		tvzero.tv_usec = 0;
+
+		if (select(this->pty + 1, &ifs, NULL, NULL, &tvzero) <= 0)
+			return;
+		bytesread = read(this->pty, buf, 512);
+		if (bytesread <= 0)
+			return;
+
+		for ( int i = 0; i < bytesread; ++i )
+			this->insert( buf[i] );
+	}
+}
+
 
 void Terminal::insert( char c ) {
 
