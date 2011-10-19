@@ -16,7 +16,8 @@ Terminal::Terminal(int width, int height) {
 	this->pty    = -1;
 
 	this->special   = false;
-	this->escape    = (char *)malloc(sizeof(char) * 8);
+	this->maxesc    = 16; /* Hopefully more then we ever need. */
+	this->escape    = (char *)malloc(sizeof(char) * this->maxesc);
 	this->escape[0] = '\0';
 
 	/* OK. This cMode can be a bit of a bear to use. Let's explain it
