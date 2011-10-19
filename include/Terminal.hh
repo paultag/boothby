@@ -24,6 +24,9 @@ class Terminal {
 		void insert( char c );
 		void scrollUp();
 		void render( WINDOW * win );
+
+		int getWidth();
+		int getHeight();
 		
 };
 

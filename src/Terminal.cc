@@ -82,3 +82,11 @@ void Terminal::insert( char c ) {
 		this->scrollUp();
 	}
 }
+
+int Terminal::getWidth() {
+	return this->width;
+}
+
+int Terminal::getHeight() {
+	return this->height;
+}
