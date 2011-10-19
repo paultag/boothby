@@ -39,3 +39,6 @@ void Pane::resize( int width, int height ) {
 	this->draw_outline();
 }
 
+WINDOW * Pane::getWindow() {
+	return this->win;
+}

@@ -14,8 +14,8 @@ RenderableTerminal::RenderableTerminal( Terminal * t ) {
 	/*                                 ^^^^^
 	                            Default position. Fixme */
 	this->pane = p;
-
 }
 
 void RenderableTerminal::render() {
+	this->terminal->render(this->pane->getWindow());
 }
