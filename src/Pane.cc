@@ -14,6 +14,10 @@ Pane::Pane(int x, int y, int width, int height) {
 	this->draw_outline();
 }
 
+Pane::~Pane() {
+
+}
+
 void Pane::draw_outline() {
 	//box(this->win, 0, 0);
 	// XXX: Fix this

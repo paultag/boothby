@@ -13,6 +13,10 @@ RenderableTerminal::RenderableTerminal( Terminal * t ) {
 	this->pane = p;
 }
 
+RenderableTerminal::~RenderableTerminal() {
+	delete this->pane;
+}
+
 void RenderableTerminal::render() {
 	this->terminal->render(this->pane->getWindow());
 }

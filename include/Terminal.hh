@@ -38,6 +38,7 @@ class Terminal {
 
 	public:
 		Terminal(int width, int height);
+		~Terminal();
 		void insert( char c );
 		void type( char c );
 		void scroll_up();

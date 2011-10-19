@@ -15,6 +15,7 @@ class Pane {
 
 	public:
 		Pane(int x, int y, int width, int height);
+		~Pane();
 		void focus();
 		void move_to( int x, int y );
 		void resize( int width, int height );
