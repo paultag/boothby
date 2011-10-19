@@ -4,9 +4,9 @@
 Terminal::Terminal(int width, int height) {
 	this->width  = width;
 	this->height = height;
-	this->cX = 0;
-	this->cY = 0;
-	this->cMode = 0x70; // 112
+	this->cX     = 0;
+	this->cY     = 0;
+	this->cMode  = 0x70; // 112
 
 	/* OK. This cMode can be a bit of a bear to use. Let's explain it
 	 * a bit.

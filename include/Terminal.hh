@@ -19,6 +19,7 @@ class Terminal {
 
 	public:
 		Terminal(int width, int height);
+		
 };
 
 #endif
