@@ -4,11 +4,17 @@
 #include "Terminal.hh"
 
 Terminal::Terminal(int width, int height) {
+	this->graph  = false;
 	this->width  = width;
 	this->height = height;
 	this->cX     = 0;
 	this->cY     = 0;
 	this->cMode  = 0x70; // 112
+
+
+	this->special   = false;
+	this->escape    = (char *)malloc(sizeof(char) * 8); // XXX: Overflow...
+	this->escape[0] = '\0';
 
 	/* OK. This cMode can be a bit of a bear to use. Let's explain it
 	 * a bit.
@@ -77,19 +83,29 @@ bool Terminal::handle_special_char( char c ) {
 			return true;
 			break;
 		case '\x1B': /* begin escape sequence (aborting previous one if any) */
+			this->special = true;
 			break;
 		case '\x0E': /* enter graphical character mode */
+			this->graph = true;
+			return true;
 			break;
 		case '\x0F': /* exit graphical character mode */
+			this->graph = false;
+			return true;
 			break;
 		case '\x9B': /* CSI character. Equivalent to ESC [ */
 			break;
 		case '\x18': case '\x1A': /* these interrupt escape sequences */
+			this->special = false;
 			break;
 		case '\a': /* bell */
 			break;
 
 	}
+
+	// some last ditch crap 
+	if ( c < 35 )
+		return true;
 
 	return false;
 }

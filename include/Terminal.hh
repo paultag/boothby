@@ -10,6 +10,12 @@ typedef struct _TerminalCell {
 
 class Terminal {
 	protected:
+
+	/* iVars */
+
+		bool graph;
+		bool special;
+
 		int width;
 		int height;
 
@@ -19,9 +25,12 @@ class Terminal {
 		unsigned char cMode;
 		TerminalCell * chars;
 
+		char * escape;
+
+	/* Functions */
+
 		bool handle_special_char( char c );
 		void advance_curs();
-
 	public:
 		Terminal(int width, int height);
 		void insert( char c );
