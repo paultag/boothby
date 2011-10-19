@@ -15,8 +15,8 @@ class Terminal {
 		int cY;
 		
 		unsigned char cMode;
-		
-		TerminalCell ** cells;
+		TerminalCell * chars;
+
 	public:
 		Terminal(int width, int height);
 };
