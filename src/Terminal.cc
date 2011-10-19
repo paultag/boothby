@@ -34,5 +34,18 @@ Terminal::Terminal(int width, int height) {
 			this->chars[xOffset + iy].attr = 112;
 		}
 	}
- }
+}
 
+void Terminal::insert( char c ) {
+	int offset = ( this->cX * this->width ) + this->cY;
+	this->chars[offset].ch = c;
+	this->cX++;
+	if ( this->cX >= this->width ) {
+		this->cX = 0;
+		this->cY++;
+	}
+	if ( this->cY >= this->height ) {
+		// scroll_up
+		this->cY = this->height;
+	}
+}
