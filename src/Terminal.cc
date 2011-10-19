@@ -31,20 +31,22 @@ Terminal::Terminal(int width, int height) {
  
 	for ( int i = 0; i < ( height * width ); ++i ) {
 		this->chars[i].ch   = ' ';
-		this->chars[i].attr = 112;
+		this->chars[i].attr = this->cMode;
 	}
 }
 
 void Terminal::scrollUp() {
-	/*for ( int iy = this->height; iy >= 1; --iy ) {
-		for ( int ix = this->width; ix >= 1; --ix ) {
-			int dis = ( this->width * iy );
-			int las = ( this->width * ( iy - 1 ));
-			this->chars[las].ch   = this->chars[dis].ch;
-			this->chars[las].attr = this->chars[dis].attr;
-			this->chars[dis].ch = ' ';
+	for ( int iy = 1; iy < this->height; iy++ ) {
+		for ( int ix = 0; ix < this->width; ++ix ) {
+			int thisChar = (( this->width *   iy      ) + ix );
+			int lastChar = (( this->width * ( iy - 1 )) + ix );
+			this->chars[lastChar].ch = this->chars[thisChar].ch;
 		}
-	}*/
+	}
+	for ( int ix = 0; ix < this->width; ++ix ) {
+		int offset = ((this->width * (this->height - 1)) + ix);
+		this->chars[offset].ch = ' ';
+	}
 }
 
 void Terminal::render( WINDOW * win ) {
@@ -57,17 +59,26 @@ void Terminal::render( WINDOW * win ) {
 }
 
 void Terminal::insert( char c ) {
-	int offset = ( this->cY * this->height ) + this->cX;
+
+	int ix = this->cX;
+	int iy = this->cY;
+	/*
+	 * XXX: Why was the math using this->cX failing?
+	 * for some reason we have to bring it into the local
+	 * scope...
+	 */
+	int offset = (( this->width * iy ) + ix );
+
 	this->chars[offset].ch = c;
 	this->cX++;
-	
-	if ( this->cX >= this->width ) {
+
+	if ( this->width <= this->cX ) {
 		this->cX = 0;
 		this->cY++;
 	}
-	
-	if ( this->cY >= this->height ) {
-		// scroll
-		this->cY = this->height;
+
+	if ( this->height <= this->cY ) {
+		this->cY = (this->height - 1);
+		this->scrollUp();
 	}
 }
