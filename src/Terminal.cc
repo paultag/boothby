@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "boothby.hh"
 #include "Terminal.hh"
 
 Terminal::Terminal(int width, int height) {
@@ -44,16 +45,81 @@ void Terminal::scroll_up() {
 	}
 }
 
+void Terminal::csi_atize() {
+	
+	char * csi = this->escape;
+	
+	int slen = strlen(csi);
+	
+	if ( slen == 0 ) {
+		this->cMode = 0x70;
+		return;
+	}
+	
+	for ( int i = 0; i < slen; ++i ) {
+		
+		char c = csi[i];
+		
+		if (c == 0) {
+			this->cMode = 0x70;
+		} else if (c == 1 || c == 2 || c == 4) {
+			ATTR_MOD_BOLD(this->cMode,1);
+		} else if (c == 5) {  /* set blink */
+			ATTR_MOD_BLINK(this->cMode,1);
+		} else if (c == 7 || c == 27) { /* reverse video */
+			int fg = ATTR_FG(this->cMode);
+			int bg = ATTR_BG(this->cMode);
+			ATTR_MOD_FG(this->cMode, bg);
+			ATTR_MOD_BG(this->cMode, fg);
+		} else if (c == 8) {
+			this->cMode = 0x0;    /* invisible */
+		} else if (c == 22 || c == 24) { /* bold off */
+			ATTR_MOD_BOLD(this->cMode,0);
+		} else if (c == 25) { /* blink off */
+			ATTR_MOD_BLINK(this->cMode,0);
+		} else if (c == 28) { /* invisible off */
+			this->cMode = 0x70;
+		} else if (c >= 30 && c <= 37) {    /* set fg */
+			move(0,0);
+			printw("Set the foreground");
+			refresh();
+			ATTR_MOD_FG(this->cMode, c - 30);
+		} else if (c >= 40 && c <= 47) {    /* set bg */
+			ATTR_MOD_BG(this->cMode, c - 40);
+		} else if (c == 39) {  /* reset foreground to default */
+			ATTR_MOD_FG(this->cMode, 7);
+		} else if (c == 49) {  /* reset background to default */
+			ATTR_MOD_BG(this->cMode, 0);
+		}
+	}
+}
+
 void Terminal::render( WINDOW * win ) {
 	for ( int iy = 0; iy < this->height; ++iy ) {
 		for ( int ix = 0; ix  < this->width; ++ix ) {
 			int offset = (( this->width * iy ) + ix );
+
+			unsigned char attr = this->chars[offset].attr;
+			
+			int cp = ATTR_BG(attr) * 8 + 7 - ATTR_FG(attr);
+
+			if ( ! cp )
+				wattrset(win, A_NORMAL);
+			else
+				wattrset(win, COLOR_PAIR(cp));
+
+			if (ATTR_BOLD(attr))
+				wattron(win, A_BOLD);
+
+			if (ATTR_BLINK(attr))
+				wattron(win, A_BLINK);
+
 			mvwaddch(win, iy, ix, this->chars[offset].ch);
 		}
 	}
 }
 
-bool Terminal::handle_escape_char( char c ) {
+bool Terminal::handle_escape_char( unsigned char c ) {
 	if ( ! this->special )
 		return false;
 	int idex = strlen(this->escape);
@@ -82,8 +148,9 @@ bool Terminal::handle_escape_char( char c ) {
 
 	if ( f == '[' && is_l_csi ) {
 		this->special = false;
-		// do things (CSI)
+		this->csi_atize();
 		this->escape[0] = '\0';
+		
 		return true;
 	}
 	
@@ -96,7 +163,7 @@ bool Terminal::handle_escape_char( char c ) {
 	
 	return true;
 }
-bool Terminal::handle_graph_char( char c ) {
+bool Terminal::handle_graph_char( unsigned char c ) {
 	
 	/* This was yanked directly from rote */
 	
@@ -122,7 +189,7 @@ bool Terminal::handle_graph_char( char c ) {
 
 	return true;
 }
-bool Terminal::handle_control_char( char c ) {
+bool Terminal::handle_control_char( unsigned char c ) {
 	switch ( c ) {
 		case '\n': /* newline */
 			this->cX = this->width; /* XXX: Fix this hack */
@@ -163,7 +230,7 @@ bool Terminal::handle_control_char( char c ) {
 	return false;
 }
 
-bool Terminal::handle_special_char( char c ) {
+bool Terminal::handle_special_char( unsigned char c ) {
 
 	if ( this->handle_escape_char(c) )
 		return true;
@@ -227,7 +294,7 @@ void Terminal::poke() {
 }
 
 
-void Terminal::insert( char c ) {
+void Terminal::insert( unsigned char c ) {
 
 	if ( this->handle_special_char(c) )
 		return;
@@ -241,7 +308,9 @@ void Terminal::insert( char c ) {
 	 */
 	int offset = (( this->width * iy ) + ix );
 
-	this->chars[offset].ch = c;
+	this->chars[offset].ch   = c;
+	this->chars[offset].attr = this->cMode;
+
 	this->advance_curs();
 }
 

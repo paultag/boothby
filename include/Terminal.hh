@@ -34,18 +34,20 @@ class Terminal {
 
 	/* Functions */
 
-		bool handle_special_char( char c );
+		bool handle_special_char( unsigned char c );
 		
-		bool handle_escape_char(  char c );
-		bool handle_graph_char(   char c );
-		bool handle_control_char( char c );
+		bool handle_escape_char(  unsigned char c );
+		bool handle_graph_char(   unsigned char c );
+		bool handle_control_char( unsigned char c );
+
+		void csi_atize();
 		
 		void advance_curs();
 
 	public:
 		Terminal(int width, int height);
 		~Terminal();
-		void insert( char c );
+		void insert( unsigned char c );
 		void type( char c );
 		void scroll_up();
 		void render( WINDOW * win );
