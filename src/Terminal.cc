@@ -2,6 +2,7 @@
 #include <iostream>
 #include <pty.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Terminal.hh"
 
@@ -67,7 +68,47 @@ void Terminal::render( WINDOW * win ) {
 		}
 	}
 }
+
+static inline bool is_valid_csi_ender(char c) {
+   return (c >= 'a' && c <= 'z') ||
+          (c >= 'A' && c <= 'Z') ||
+          c == '@' || c == '`';
+}
+
 bool Terminal::handle_escape_char( char c ) {
+	if ( ! this->special )
+		return false;
+	
+	int idex = strlen(this->escape);
+	
+	if ( this->maxesc < idex )
+		throw -2; // idex; // XXX: Fix this mess
+	
+	this->escape[idex]   = c;
+	this->escape[idex+1] = '\0';
+	
+	char firstchar = this->escape[0];
+	char lastchar  = this->escape[idex];
+	
+	if (firstchar != '[' && firstchar != ']') {
+		// XXX: Stupid input
+		this->escape[0] = '\0';
+		this->special   = false;
+		return true;
+	}
+
+	if (firstchar == '[' && is_valid_csi_ender(lastchar)) {
+		// XXX: Implement CSIisms
+		this->escape[0] = '\0';
+		this->special   = false;
+		return true;
+	} else if (firstchar == ']' && lastchar == '\a') {
+		// XXX: Xtermisms
+		this->escape[0] = '\0';
+		this->special   = false;
+		return true;
+	}
+   
 	return false;
 }
 bool Terminal::handle_graph_char( char c ) {
@@ -79,15 +120,9 @@ bool Terminal::handle_graph_char( char c ) {
 	
 	char nc;
 	switch (c) {
+		case 'k': case 'l': case 'm': case 'n':
+		case 't': case 'u': case 'v': case 'w':
 		case 'j':
-		case 'k':
-		case 'l':
-		case 'm':
-		case 'n':
-		case 't':
-		case 'u':
-		case 'v':
-		case 'w':
 			nc = '+';
 			break;
 		case 'x':
@@ -120,7 +155,8 @@ bool Terminal::handle_control_char( char c ) {
 			return true;
 			break;
 		case '\x1B': /* begin escape sequence (aborting previous one if any) */
-			this->special = true;
+			this->special   = true;
+			this->escape[0] = '\0';
 			break;
 		case '\x0E': /* enter graphical character mode */
 			this->graph = true;
@@ -131,6 +167,7 @@ bool Terminal::handle_control_char( char c ) {
 			return true;
 			break;
 		case '\x9B': /* CSI character. Equivalent to ESC [ */
+			this->special = false;
 			return true;
 			break;
 		case '\x18': case '\x1A': /* these interrupt escape sequences */
@@ -204,6 +241,7 @@ void Terminal::poke() {
 
 		if (select(this->pty + 1, &ifs, NULL, NULL, &tvzero) <= 0)
 			return;
+		
 		bytesread = read(this->pty, buf, 512);
 		if (bytesread <= 0)
 			return;
