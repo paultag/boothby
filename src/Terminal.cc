@@ -17,26 +17,10 @@ Terminal::Terminal(int width, int height) {
 	this->pty    = -1;
 
 	this->special   = false;
-	this->maxesc    = 16; /* Hopefully more then we ever need. */
+	this->maxesc    = 128; /* Hopefully more then we ever need. */
 	this->escape    = (char *)malloc(sizeof(char) * this->maxesc);
 	this->escape[0] = '\0';
-
-	/* OK. This cMode can be a bit of a bear to use. Let's explain it
-	 * a bit.
-	 * 
-	 *     FG     BG
-	 *  +------+------+
-	 *  | BBBM | FFFN |
-	 *    ^ 0th bit
-	 *    0000 | 1110 
-	 *           16 32 64
-	 *    = 112
-	 *
-	 * 0 -> 3 = Background Color Code ( 0 - 7 )
-	 * 4      = Blink
-	 * 5 -> 7 = Foreground Color Code ( 0 - 7 )
-	 * 8      = Bold
-	 */
+	
 	this->chars = (TerminalCell*)
 		malloc(sizeof(TerminalCell) * (width * height));
  
@@ -69,47 +53,48 @@ void Terminal::render( WINDOW * win ) {
 	}
 }
 
-static inline bool is_valid_csi_ender(char c) {
-   return (c >= 'a' && c <= 'z') ||
-          (c >= 'A' && c <= 'Z') ||
-          c == '@' || c == '`';
-}
-
 bool Terminal::handle_escape_char( char c ) {
 	if ( ! this->special )
 		return false;
-	
 	int idex = strlen(this->escape);
 	
-	if ( this->maxesc < idex )
-		throw -2; // idex; // XXX: Fix this mess
+	if ( idex > this->maxesc )
+		throw -2;
 	
 	this->escape[idex]   = c;
 	this->escape[idex+1] = '\0';
-	
-	char firstchar = this->escape[0];
-	char lastchar  = this->escape[idex];
-	
-	if (firstchar != '[' && firstchar != ']') {
-		// XXX: Stupid input
+
+	char f = this->escape[0];
+	char l = this->escape[idex];
+
+	bool is_l_csi = (
+		( l >= 'a' && l <= 'z' ) ||
+		( l >= 'A' && l <= 'Z' ) ||
+		  l == '@'               ||
+		  l == '`'
+	);
+
+	if ( f != '[' && f != ']' ) {
 		this->escape[0] = '\0';
 		this->special   = false;
-		return true;
+		return true; // donezo.
 	}
 
-	if (firstchar == '[' && is_valid_csi_ender(lastchar)) {
-		// XXX: Implement CSIisms
+	if ( f == '[' && is_l_csi ) {
+		this->special = false;
+		// do things (CSI)
 		this->escape[0] = '\0';
-		this->special   = false;
-		return true;
-	} else if (firstchar == ']' && lastchar == '\a') {
-		// XXX: Xtermisms
-		this->escape[0] = '\0';
-		this->special   = false;
 		return true;
 	}
-   
-	return false;
+	
+	if ( f == ']' && l == '\a' ) {
+		this->special = false;
+		// do xterm things
+		this->escape[0] = '\0';
+		return true;
+	}
+	
+	return true;
 }
 bool Terminal::handle_graph_char( char c ) {
 	
@@ -154,28 +139,18 @@ bool Terminal::handle_control_char( char c ) {
 				this->insert(' ');
 			return true;
 			break;
-		case '\x1B': /* begin escape sequence (aborting previous one if any) */
-			this->special   = true;
-			this->escape[0] = '\0';
-			break;
-		case '\x0E': /* enter graphical character mode */
-			this->graph = true;
-			return true;
-			break; 
-		case '\x0F': /* exit graphical character mode */
-			this->graph = false;
-			return true;
-			break;
-		case '\x9B': /* CSI character. Equivalent to ESC [ */
-			this->special = false;
-			return true;
-			break;
-		case '\x18': case '\x1A': /* these interrupt escape sequences */
-			this->special = false;
-			return true;
-			break;
 		case '\a': /* bell */
 			return true;
+			break;
+		case 27:
+			this->escape[0] = '\0';
+			this->special   = true;
+			return true;
+			break;
+		case 0x9B:
+			this->escape[0] = '[';
+			this->escape[1] = '\0';
+			this->special   = true;
 			break;
 		default:
 			break;
