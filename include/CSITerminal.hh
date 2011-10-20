@@ -14,6 +14,7 @@ class CSITerminal : public Terminal {
 	public:
 		CSITerminal();
 		CSITerminal(int width, int height);		
+		virtual void insert( unsigned char c );
 };
 
 #endif

@@ -183,3 +183,9 @@ bool CSITerminal::handle_special_char( unsigned char c ) {
 
 	return false;
 }
+
+void CSITerminal::insert( unsigned char c ) {
+	if ( this->handle_special_char(c) )
+		return;
+	Terminal::insert(c);
+}

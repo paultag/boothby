@@ -41,7 +41,7 @@ class Terminal {
 		Terminal(int width, int height);
 		Terminal();
 		~Terminal();
-		void insert( unsigned char c );
+		virtual void insert( unsigned char c );
 		void type( char c );
 		void scroll_up();
 		void render( WINDOW * win );
