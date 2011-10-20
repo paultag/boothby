@@ -12,7 +12,8 @@ class CSITerminal : public Terminal {
 		void csi_atize();
 
 	public:
-		
+		CSITerminal();
+		CSITerminal(int width, int height);		
 };
 
 #endif

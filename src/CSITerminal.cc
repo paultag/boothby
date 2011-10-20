@@ -1,8 +1,16 @@
 #include "boothby.hh"
-#include "Terminal.hh"
+
 #include "CSITerminal.hh"
 
 #include <string.h>
+
+CSITerminal::CSITerminal() {
+	this->_init_Terminal(80, 25);
+}
+
+CSITerminal::CSITerminal( int width, int height ) {
+	this->_init_Terminal(width, height);
+}
 
 void CSITerminal::csi_atize() {
 	

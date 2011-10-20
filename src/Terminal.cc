@@ -31,6 +31,10 @@ void Terminal::_init_Terminal(int width, int height) {
 	}
 }
 
+Terminal::~Terminal() {
+
+}
+
 Terminal::Terminal() {
 	this->_init_Terminal(80, 25);
 }

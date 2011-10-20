@@ -1,4 +1,4 @@
-#include "Terminal.hh"
+#include "CSITerminal.hh"
 #include "RenderableTerminal.hh"
 
 #include <iostream>
@@ -8,7 +8,7 @@
 int main ( int argc, char ** argv ) {
 	init_screen();
 	try {
-		Terminal * t = new Terminal(80, 25);
+		Terminal * t = new CSITerminal(80, 25);
 		RenderableTerminal rt(t);
 		update_screen();
 		t->fork("bash");
