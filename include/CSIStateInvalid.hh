@@ -1,9 +1,9 @@
-#ifndef CSISTATEENTRY_HH_
-#define CSISTATEENTRY_HH_ ja
+#ifndef CSISTATEINVALID_HH_
+#define CSISTATEINVALID_HH_ ja
 
 #include "State.hh"
 
-class CSIStateEntry : public State {
+class CSIStateInvalid : public State {
 	public:
 		virtual void leave_state();
 		virtual void enter_state();
