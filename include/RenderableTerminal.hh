@@ -19,6 +19,8 @@ class RenderableTerminal : public Renderable {
 		virtual void render();
 		void insert(unsigned char c);
 		
+		void move_to(unsigned int x, unsigned int y );
+		
 };
 
 #endif

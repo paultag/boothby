@@ -9,7 +9,7 @@ RenderableTerminal::RenderableTerminal( Terminal * t ) {
 	this->width  = width;
 	this->height = height;
 
-	Pane * p = new Pane(5, 5, width, height );
+	Pane * p = new Pane(0, 0, width, height );
 	this->pane = p;
 }
 
@@ -23,4 +23,8 @@ void RenderableTerminal::render() {
 
 void RenderableTerminal::insert( unsigned char c ) {
 	this->terminal->insert(c);
+}
+
+void RenderableTerminal::move_to(unsigned int x, unsigned int y ) {
+	this->pane->move_to(x, y);
 }

@@ -3,6 +3,7 @@
 #include "CSITerminal.hh"
 
 #include <string.h>
+#include <iostream>
 
 CSITerminal::CSITerminal() {
 	this->_init_Terminal(80, 25);
@@ -48,8 +49,9 @@ void CSITerminal::csi_atize() {
 			this->cMode = 0x70;
 		} else if (c >= 30 && c <= 37) {    /* set fg */
 			move(0,0);
-			printw("Set the foreground");
 			refresh();
+			printw("Set the foreground");
+			usleep(2000000);
 			ATTR_MOD_FG(this->cMode, c - 30);
 		} else if (c >= 40 && c <= 47) {    /* set bg */
 			ATTR_MOD_BG(this->cMode, c - 40);
