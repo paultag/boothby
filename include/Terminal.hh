@@ -46,7 +46,7 @@ class Terminal {
 		void scroll_up();
 		void render( WINDOW * win );
 		void poke();
-		pid_t fork( const char * command ); /* XXX: Protect this */
+		pid_t fork( const char * command ); /* XXX: Protect this? */
 
 		int get_width();
 		int get_height();
