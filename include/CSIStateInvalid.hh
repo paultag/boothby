@@ -10,4 +10,6 @@ class CSIStateInvalid : public State {
 		virtual void process( char c );
 };
 
+extern CSIStateInvalid * csi_state_invalid;
+
 #endif

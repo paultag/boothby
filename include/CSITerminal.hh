@@ -9,7 +9,6 @@ class CSITerminal : public Terminal {
 		bool handle_escape_char(  unsigned char c );
 		bool handle_graph_char(   unsigned char c );
 		bool handle_control_char( unsigned char c );
-		void csi_atize();
 
 	public:
 		CSITerminal();

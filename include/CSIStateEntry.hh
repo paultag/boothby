@@ -10,4 +10,6 @@ class CSIStateEntry : public State {
 		virtual void process( char c );
 };
 
+extern CSIStateEntry * csi_state_entry;
+
 #endif

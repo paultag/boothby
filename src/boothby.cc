@@ -18,15 +18,3 @@ void update_screen() {
 	update_panels();
 	doupdate();
 }
-
-int get_screen_x() { //XXX: Clean this up
-	int row, col;
-	getmaxyx(stdscr,row,col);
-	return col;
-}
-
-int get_screen_y() { //XXX: Clean this up
-	int row, col;
-	getmaxyx(stdscr,row,col);
-	return row;
-}

@@ -1,71 +1,23 @@
 #include "boothby.hh"
 
 #include "CSITerminal.hh"
+#include "CSIEscapeParser.hh"
 
 #include <string.h>
 #include <iostream>
 
 CSITerminal::CSITerminal() {
 	this->_init_Terminal(80, 25);
+	/*                   ^^^^^^ good guess :) */
 }
-
 CSITerminal::CSITerminal( int width, int height ) {
 	this->_init_Terminal(width, height);
-}
-
-void CSITerminal::csi_atize() {
-	
-	char * csi = this->escape;
-	
-	int slen = strlen(csi);
-	
-	if ( slen == 0 ) {
-		this->cMode = 0x70;
-		return;
-	}
-	
-	for ( int i = 0; i < slen; ++i ) {
-		
-		char c = csi[i];
-		
-		if (c == 0) {
-			this->cMode = 0x70;
-		} else if (c == 1 || c == 2 || c == 4) {
-			ATTR_MOD_BOLD(this->cMode,1);
-		} else if (c == 5) {  /* set blink */
-			ATTR_MOD_BLINK(this->cMode,1);
-		} else if (c == 7 || c == 27) { /* reverse video */
-			int fg = ATTR_FG(this->cMode);
-			int bg = ATTR_BG(this->cMode);
-			ATTR_MOD_FG(this->cMode, bg);
-			ATTR_MOD_BG(this->cMode, fg);
-		} else if (c == 8) {
-			this->cMode = 0x0;    /* invisible */
-		} else if (c == 22 || c == 24) { /* bold off */
-			ATTR_MOD_BOLD(this->cMode,0);
-		} else if (c == 25) { /* blink off */
-			ATTR_MOD_BLINK(this->cMode,0);
-		} else if (c == 28) { /* invisible off */
-			this->cMode = 0x70;
-		} else if (c >= 30 && c <= 37) {    /* set fg */
-			move(0,0);
-			refresh();
-			printw("Set the foreground");
-			usleep(2000000);
-			ATTR_MOD_FG(this->cMode, c - 30);
-		} else if (c >= 40 && c <= 47) {    /* set bg */
-			ATTR_MOD_BG(this->cMode, c - 40);
-		} else if (c == 39) {  /* reset foreground to default */
-			ATTR_MOD_FG(this->cMode, 7);
-		} else if (c == 49) {  /* reset background to default */
-			ATTR_MOD_BG(this->cMode, 0);
-		}
-	}
 }
 
 bool CSITerminal::handle_escape_char( unsigned char c ) {
 	if ( ! this->special )
 		return false;
+
 	int idex = strlen(this->escape);
 	
 	if ( idex > this->maxesc )
@@ -91,10 +43,15 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 	}
 
 	if ( f == '[' && is_l_csi ) {
-		this->special = false;
-		this->csi_atize();
-		this->escape[0] = '\0';
 		
+		try {
+			csi_escape_parse( this->escape );
+		} catch ( int i ) { // XXX: Fixme
+			// Invalid char :(
+		}
+		
+		this->special = false;
+		this->escape[0] = '\0';
 		return true;
 	}
 	
@@ -108,30 +65,7 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 	return true;
 }
 bool CSITerminal::handle_graph_char( unsigned char c ) {
-	
-	/* This was yanked directly from rote */
-	
-	if ( ! this->graph )
-		return false;
-	
-	char nc;
-	switch (c) {
-		case 'k': case 'l': case 'm': case 'n':
-		case 't': case 'u': case 'v': case 'w':
-		case 'j':
-			nc = '+';
-			break;
-		case 'x':
-			nc = '|';
-			break;
-		default:
-			nc = '%';
-			break;
-	}
-
-	this->insert(nc); // come back at it like a mofo.
-
-	return true;
+	return false;
 }
 bool CSITerminal::handle_control_char( unsigned char c ) {
 	switch ( c ) {
