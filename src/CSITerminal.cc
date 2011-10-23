@@ -17,7 +17,17 @@ CSITerminal::CSITerminal( int width, int height ) {
 }
 
 void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
-	
+		/* OK. Let's apply this to the current term */
+		switch ( pair->first ) {
+			
+			case 'm':
+				/* Color-changer */
+				break;
+			
+			default:
+				/* Damn! */
+				break;
+		}
 }
 
 bool CSITerminal::handle_escape_char( unsigned char c ) {
@@ -54,15 +64,8 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 			CSICommandPair * CSIEscapeSequence = 
 				csi_escape_parse( this->escape );
 			this->apply_csi_sequence( CSIEscapeSequence );
-			/*
-			OK, we have a valid thinger
-			char cmd = CSIEscapeSequence->first;
-			move(0,0);
-			printw("Cmd: %s", &cmd);
-			refresh();
-			usleep(2000000); */
 		} catch ( int i ) { // XXX: Fixme
-			// Invalid char :(
+			/* Invalid char :( */
 		}
 		
 		this->special = false;
