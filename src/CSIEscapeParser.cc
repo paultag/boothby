@@ -10,7 +10,7 @@ CSICommandPair * csi_escape_parse( String s ) {
 		csi_machine_process(s[i]);
 
 	CSICommandPair * parsed_csi_string = new CSICommandPair(
-		csi_state_number_cmd,
+		csi_state_number_cmd.c_str()[0],
 		&csi_state_number_queue
 	);
 

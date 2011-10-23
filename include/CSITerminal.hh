@@ -1,6 +1,7 @@
 #ifndef _CSITERMINAL_HH_
 #define _CSITERMINAL_HH_ foo
 
+#include "CSIStateMachine.hh"
 #include "Terminal.hh"
 
 class CSITerminal : public Terminal {
@@ -13,6 +14,7 @@ class CSITerminal : public Terminal {
 	public:
 		CSITerminal();
 		CSITerminal(int width, int height);		
+		void apply_csi_sequence( CSICommandPair * pair );
 		virtual void insert( unsigned char c );
 };
 

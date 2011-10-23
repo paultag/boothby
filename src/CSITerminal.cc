@@ -1,10 +1,12 @@
 #include "boothby.hh"
 
-#include "CSITerminal.hh"
 #include "CSIEscapeParser.hh"
+#include "CSITerminal.hh"
 
 #include <string.h>
 #include <iostream>
+#include <vector>
+#include <map>
 
 CSITerminal::CSITerminal() {
 	this->_init_Terminal(80, 25);
@@ -12,6 +14,10 @@ CSITerminal::CSITerminal() {
 }
 CSITerminal::CSITerminal( int width, int height ) {
 	this->_init_Terminal(width, height);
+}
+
+void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
+	
 }
 
 bool CSITerminal::handle_escape_char( unsigned char c ) {
@@ -45,7 +51,16 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 	if ( f == '[' && is_l_csi ) {
 		
 		try {
-			csi_escape_parse( this->escape );
+			CSICommandPair * CSIEscapeSequence = 
+				csi_escape_parse( this->escape );
+			this->apply_csi_sequence( CSIEscapeSequence );
+			/*
+			OK, we have a valid thinger
+			char cmd = CSIEscapeSequence->first;
+			move(0,0);
+			printw("Cmd: %s", &cmd);
+			refresh();
+			usleep(2000000); */
 		} catch ( int i ) { // XXX: Fixme
 			// Invalid char :(
 		}

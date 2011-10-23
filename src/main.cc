@@ -10,6 +10,7 @@ int main ( int argc, char ** argv ) {
 	try {
 		Terminal * t = new CSITerminal(80, 25);
 		RenderableTerminal rt(t);
+		rt.move_to(1, 1);
 		
 		update_screen();
 		t->fork("bash");

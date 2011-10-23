@@ -1,8 +1,11 @@
 #ifndef CSISTATENUMBER_HH_
 #define CSISTATENUMBER_HH_ ja
 
+#include "boothby.hh"
 #include "State.hh"
+
 #include <vector>
+#include <string>
 
 class CSIStateNumber : public State {
 	public:
@@ -15,6 +18,6 @@ extern CSIStateNumber * csi_state_number;
 /* OK, we need a vector for the parsed junk */
 
 extern std::vector<int> csi_state_number_queue;
-extern char             csi_state_number_cmd;
+extern String           csi_state_number_cmd;
 
 #endif

@@ -1,15 +1,22 @@
-#include "CSIStateNumber.hh"
 #include "CSIStateMachine.hh"
+#include "CSIStateNumber.hh"
 
+#include "boothby.hh"
+
+#include <stdlib.h>
 #include <vector>
+#include <string>
+#include <string.h>
 
 /* more kruft */
 
-#include "CSIStateEntry.hh"
 #include "CSIStateInvalid.hh"
+#include "CSIStateEntry.hh"
 
 std::vector<int> csi_state_number_queue;
-char        csi_state_number_cmd;
+String           csi_state_number_cmd;
+
+String csi_state_number_pending;
 
 void CSIStateNumber::process( char c ) {
 	/*
@@ -37,15 +44,18 @@ void CSIStateNumber::process( char c ) {
 		 */
 		
 		/* Let's note the ending char */
+		csi_state_number_cmd   = c;
 		csi_machine_next_state = csi_state_entry;
 	} else if ( c > '0' && c < '9' ) {
 		/* We have an ascii version of a number.
 		 *  0 = 48
 		 *  9 = 57
 		 */
-		
+		csi_state_number_pending = c + csi_state_number_pending;
 	} else if ( c == ';' ) {
 		/* "Commit" the pending char */
+		int n = atoi(csi_state_number_pending.c_str());
+		csi_state_number_queue.push_back(n); /* XXX: Backwards? */
 	} else {
 		csi_machine_next_state = csi_state_invalid;
 	}
