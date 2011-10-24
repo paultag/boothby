@@ -68,6 +68,12 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			this->cX = this->cX <= 0 ?
 				this->cX : this->cX - 1;
 			break;
+		/* OK. Enough with the easy ones */
+		case 'E': /* next N line(s) */
+			int count = pair->second->at(0);
+			this->cY = ( this->cY + count ) >= this->width ?
+				this->width : this->cY + count;
+			break;
 		 
 	 }
 }
@@ -176,7 +182,7 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 bool CSITerminal::handle_graph_char( unsigned char c ) {
 	return false;
 }
-bool CSITerminal::handle_control_char( unsigned char c ) {
+bool CSITerminal::handle_control_char( unsigned char c ) { /* XXX: Move this to Terminal */
 	switch ( c ) {
 		case '\n': /* newline */
 			this->cX = this->width; /* XXX: Fix this hack */

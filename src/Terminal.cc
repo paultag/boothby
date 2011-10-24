@@ -73,11 +73,13 @@ void Terminal::scroll_up() {
 			int thisChar = (( this->width *   iy      ) + ix );
 			int lastChar = (( this->width * ( iy - 1 )) + ix );
 			this->chars[lastChar].ch = this->chars[thisChar].ch;
+			this->chars[lastChar].attr = this->chars[thisChar].attr;
 		}
 	}
 	for ( int ix = 0; ix < this->width; ++ix ) {
 		int offset = ((this->width * (this->height - 1)) + ix);
 		this->chars[offset].ch = ' ';
+		this->chars[offset].attr = 0x70;
 	}
 }
 
