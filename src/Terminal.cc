@@ -29,6 +29,8 @@
 #include "boothby.hh"
 #include "Terminal.hh"
 
+#include "conf/term.hh"
+
 void Terminal::_init_Terminal(int width, int height) {
 	this->graph  = false;
 	this->width  = width;
@@ -91,8 +93,10 @@ void Terminal::render( WINDOW * win ) {
 			wattrset(win, A_NORMAL);
 
 			if ( ! cp ) {
+				// ( if not false (0) ) -> if it's a 0
 				wattrset(win, A_NORMAL);
 			} else {
+				// if we have anything, set the color
 				wattrset(win, COLOR_PAIR(cp));
 			}
 			if (ATTR_BOLD(attr)) {
@@ -124,7 +128,7 @@ pid_t Terminal::fork( const char * command ) {
 	if (childpid < 0) return -1;
 
 	if (childpid == 0) {
-		setenv("TERM", "linux", 1);
+		setenv("TERM", TERMINAL_ENV_NAME, 1);
 		execl("/bin/sh", "/bin/sh", "-c", command, NULL);
 		std::cerr << "Oh, crap. Failed to fork." << std::endl;
 		exit(127);
@@ -176,14 +180,6 @@ void Terminal::insert( unsigned char c ) {
 
 	this->chars[offset].ch   = c;
 	this->chars[offset].attr = this->cMode;
-	
-	/* move (0,0);
-	printw("%d", this->cMode);
-	refresh();
-	usleep(200000); */
-
-	// SLEEPDEBUG(this->cMode);
-
 	this->advance_curs();
 }
 

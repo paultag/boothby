@@ -45,8 +45,6 @@ void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
 	for ( unsigned int i = 0; i < colors->size(); ++i ) {
 		int id = colors->at(i);
 
-		// std::cerr << "Setting attr: " << id << std::endl;
-
 		/* OK, some color logic */
 		switch ( id ) {
 			case 0:
@@ -115,7 +113,6 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 			this->apply_csi_sequence( CSIEscapeSequence );
 		} catch ( int i ) { // XXX: Fixme
 			/* Invalid char :( */
-			// std::cerr << "Error parsing " << this->escape << std::endl; /// XXX: THIS
 		}
 		
 		this->special = false;
@@ -161,6 +158,7 @@ bool CSITerminal::handle_control_char( unsigned char c ) {
 			return true;
 			break;
 		case 0x9B:
+			/* Rote seems to do this. Let's copy the case. */
 			this->escape[0] = '[';
 			this->escape[1] = '\0';
 			this->special   = true;
@@ -177,7 +175,6 @@ bool CSITerminal::handle_control_char( unsigned char c ) {
 }
 
 bool CSITerminal::handle_special_char( unsigned char c ) {
-
 	if ( this->handle_escape_char(c) )
 		return true;
 	else if ( this->handle_graph_char(c) )
