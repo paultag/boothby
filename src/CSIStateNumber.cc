@@ -57,7 +57,7 @@ void CSIStateNumber::process( char c ) {
 	 *
 	 */
 
-	if ( c > 'A' && c < 'z' ) {
+	if ( c >= 'A' && c <= 'z' ) {
 		/* OK, so the char is 'twixt A and z, which means that
 		 * it's alpha. This means that we're done. Let's parse this
 		 * away.
@@ -72,9 +72,8 @@ void CSIStateNumber::process( char c ) {
 		/* "Commit" the pending char */
 		int n = atoi(csi_state_number_pending.c_str());
 		csi_state_number_queue.insert(csi_state_number_queue.end(), n);
-
 		csi_machine_next_state = csi_state_entry;
-	} else if ( c > '0' && c < '9' ) {
+	} else if ( c >= '0' && c <= '9' ) {
 		/* We have an ascii version of a number.
 		 *  0 = 48
 		 *  9 = 57
@@ -84,7 +83,6 @@ void CSIStateNumber::process( char c ) {
 		/* "Commit" the pending char */
 		int n = atoi(csi_state_number_pending.c_str());
 		csi_state_number_queue.insert(csi_state_number_queue.end(), n);
-		
 		csi_state_number_pending = "";
 	} else {
 		csi_machine_next_state = csi_state_invalid;
@@ -93,7 +91,11 @@ void CSIStateNumber::process( char c ) {
 }
 
 void CSIStateNumber::enter_state() {
-	/* Nullop */
+	csi_state_number_cmd = '\0';
+	csi_state_number_queue.erase(
+		csi_state_number_queue.begin(),
+		csi_state_number_queue.end()
+	);
 }
 
 void CSIStateNumber::leave_state() {

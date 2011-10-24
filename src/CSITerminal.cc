@@ -45,7 +45,6 @@ void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
 	for ( unsigned int i = 0; i < colors->size(); ++i ) {
 		int id = colors->at(i);
 		/* OK, some color logic */
-		
 		switch ( id ) {
 			case 0:
 				this->cMode = 0x70;
@@ -110,6 +109,10 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 				csi_escape_parse( this->escape );
 			this->apply_csi_sequence( CSIEscapeSequence );
 		} catch ( int i ) { // XXX: Fixme
+			/* move(0,0);
+			printw("%s", this->escape);
+			refresh();
+			usleep(200000); */
 			/* Invalid char :( */
 		}
 		
