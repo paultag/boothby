@@ -37,7 +37,9 @@ class CSITerminal : public Terminal {
 		CSITerminal();
 		CSITerminal(int width, int height);		
 		virtual void insert( unsigned char c );
+		
 		void apply_csi_sequence( CSICommandPair * pair );
+		void apply_csi_color_vector( CSICommandPair * pair );
 };
 
 #endif

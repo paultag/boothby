@@ -29,6 +29,7 @@
 #include <vector>
 #include <string>
 #include <string.h>
+#include <ncurses.h>
 
 /* more kruft */
 
@@ -67,17 +68,24 @@ void CSIStateNumber::process( char c ) {
 		
 		/* Let's note the ending char */
 		csi_state_number_cmd   = c;
+
+		/* "Commit" the pending char */
+		int n = atoi(csi_state_number_pending.c_str());
+		csi_state_number_queue.insert(csi_state_number_queue.end(), n);
+
 		csi_machine_next_state = csi_state_entry;
 	} else if ( c > '0' && c < '9' ) {
 		/* We have an ascii version of a number.
 		 *  0 = 48
 		 *  9 = 57
 		 */
-		csi_state_number_pending = c + csi_state_number_pending;
+		csi_state_number_pending =  csi_state_number_pending + c;
 	} else if ( c == ';' ) {
 		/* "Commit" the pending char */
 		int n = atoi(csi_state_number_pending.c_str());
-		csi_state_number_queue.push_back(n); /* XXX: Backwards? */
+		csi_state_number_queue.insert(csi_state_number_queue.end(), n);
+		
+		csi_state_number_pending = "";
 	} else {
 		csi_machine_next_state = csi_state_invalid;
 	}

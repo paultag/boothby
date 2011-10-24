@@ -88,17 +88,22 @@ void Terminal::render( WINDOW * win ) {
 			
 			int cp = ATTR_BG(attr) * 8 + 7 - ATTR_FG(attr);
 
-			if ( ! cp )
+			if ( ! cp ) {
 				wattrset(win, A_NORMAL);
-			else
+			} else {
 				wattrset(win, COLOR_PAIR(cp));
-
-			if (ATTR_BOLD(attr))
+			}
+			if (ATTR_BOLD(attr)) {
 				wattron(win, A_BOLD);
+			} else {
+				wattroff(win, A_BOLD);
+			}
 
-			if (ATTR_BLINK(attr))
+			if (ATTR_BLINK(attr)) {
 				wattron(win, A_BLINK);
-
+			} else {
+				wattroff(win, A_BLINK);
+			}
 			mvwaddch(win, iy, ix, this->chars[offset].ch);
 		}
 	}
@@ -169,6 +174,13 @@ void Terminal::insert( unsigned char c ) {
 
 	this->chars[offset].ch   = c;
 	this->chars[offset].attr = this->cMode;
+	
+	/* move (0,0);
+	printw("%d", this->cMode);
+	refresh();
+	usleep(200000); */
+
+	// SLEEPDEBUG(this->cMode);
 
 	this->advance_curs();
 }

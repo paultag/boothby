@@ -30,6 +30,9 @@ void init_screen();
 void uninit_screen();
 void update_screen();
 
+#define SLEEPDEBUG(foo) \
+	move(0,0); printw("%d", foo); refresh(); usleep(2000000)
+
 #define ATTR_BG(attr)              ((attr) & 0x07)
 #define ATTR_FG(attr)              (((attr) & 0x70) >> 4)
 #define ATTR_XBG(attr)             ((attr) & 0x0F)

@@ -38,12 +38,36 @@ CSITerminal::CSITerminal( int width, int height ) {
 	this->_init_Terminal(width, height);
 }
 
+void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
+	// do things
+	std::vector<int> * colors = pair->second;
+	
+	for ( unsigned int i = 0; i < colors->size(); ++i ) {
+		int id = colors->at(i);
+		/* OK, some color logic */
+		
+		switch ( id ) {
+			case 0:
+				this->cMode = 0x70;
+				break;
+			case 1:
+			case 2:
+			case 4:
+				ATTR_MOD_BOLD(this->cMode, 1);
+				break;
+			default:
+				/* Unknown */
+				break;
+		}
+	}
+}
+
 void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 		/* OK. Let's apply this to the current term */
 		switch ( pair->first ) {
 			case 'm':
 				/* Color-changer */
-				
+				this->apply_csi_color_vector(pair);
 				break;
 			default:
 				/* Damn! */

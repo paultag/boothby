@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo "[31mHello, World[0m"
+echo "[31;1mHello, World[0m"
