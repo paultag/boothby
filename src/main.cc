@@ -22,6 +22,7 @@
 
 #include "CSITerminal.hh"
 #include "RenderableTerminal.hh"
+#include "CSIEscapeParser.hh"
 
 #include <iostream>
 
@@ -39,9 +40,7 @@ int main ( int argc, char ** argv ) {
 		
 		while ( true ) {
 			t->poke();
-			
 			rt.render();
-			
 			update_screen();
 			timeout(0);
 			char ch = getch();
@@ -54,5 +53,4 @@ int main ( int argc, char ** argv ) {
 		uninit_screen();
 		std::cout << "ERR: " << i << std::endl;
 	}
-	
 }

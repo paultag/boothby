@@ -44,6 +44,9 @@ void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
 	
 	for ( unsigned int i = 0; i < colors->size(); ++i ) {
 		int id = colors->at(i);
+
+		std::cerr << "Setting attr: " << id << std::endl;
+
 		/* OK, some color logic */
 		switch ( id ) {
 			case 0:
@@ -56,6 +59,7 @@ void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
 				break;
 			case 5:
 				ATTR_MOD_BLINK(this->cMode, 1);
+				break;
 			default:
 				/* Unknown */
 				break;
@@ -105,13 +109,13 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 	}
 
 	if ( f == '[' && is_l_csi ) {
-		
 		try {
 			CSICommandPair * CSIEscapeSequence = 
 				csi_escape_parse( this->escape );
 			this->apply_csi_sequence( CSIEscapeSequence );
 		} catch ( int i ) { // XXX: Fixme
 			/* Invalid char :( */
+			std::cerr << "Error parsing " << this->escape << std::endl; /// XXX: THIS
 		}
 		
 		this->special = false;
