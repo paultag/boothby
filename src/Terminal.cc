@@ -88,6 +88,8 @@ void Terminal::render( WINDOW * win ) {
 			
 			int cp = ATTR_BG(attr) * 8 + 7 - ATTR_FG(attr);
 
+			wattrset(win, A_NORMAL);
+
 			if ( ! cp ) {
 				wattrset(win, A_NORMAL);
 			} else {
