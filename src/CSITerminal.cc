@@ -128,6 +128,9 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 				this->erase_to_from( 0, 0, this->width, this->height );
 			}
 			break;
+		case 'K':
+			
+			break;
 		default:
 			/* Humm. Odd. */
 			break;
