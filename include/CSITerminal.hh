@@ -33,13 +33,14 @@ class CSITerminal : public Terminal {
 		bool handle_graph_char(   unsigned char c );
 		bool handle_control_char( unsigned char c );
 
+		void apply_csi_color_vector(    CSICommandPair * pair );
+		void apply_csi_movement_vector( CSICommandPair * pair );
 	public:
 		CSITerminal();
 		CSITerminal(int width, int height);		
 		virtual void insert( unsigned char c );
 		
 		void apply_csi_sequence( CSICommandPair * pair );
-		void apply_csi_color_vector( CSICommandPair * pair );
 };
 
 #endif

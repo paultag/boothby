@@ -38,6 +38,10 @@ CSITerminal::CSITerminal( int width, int height ) {
 	this->_init_Terminal(width, height);
 }
 
+void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
+	
+}
+
 void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
 	// do things
 	std::vector<int> * colors = pair->second;
@@ -71,6 +75,16 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 			case 'm':
 				/* Color-changer */
 				this->apply_csi_color_vector(pair);
+				break;
+			case 'A': /* CUU */
+			case 'B': /* CUD */
+			case 'C': /* CUF */
+			case 'D': /* CUB */
+			case 'E': /* CNL */
+			case 'F': /* CPL */
+			case 'G': /* CHA */
+			case 'H': /* CUP */
+				this->apply_csi_movement_vector(pair);
 				break;
 			default:
 				/* Damn! */
