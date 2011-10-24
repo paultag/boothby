@@ -67,6 +67,16 @@ Terminal::Terminal( int width, int height ) {
 	this->_init_Terminal(width, height);
 }
 
+void Terminal::erase_to_from( int iX, int iY, int tX, int tY ) {
+	for ( int iy = iY; iy < this->height; ++iy ) {
+		for ( int ix = iX; ix < this->width; ++ix ) {
+			int c = (( this->width * iy ) + ix );
+			this->chars[c].ch   = ' ';
+			this->chars[c].attr = 0x70;
+		}
+	}
+}
+
 void Terminal::scroll_up() {
 	for ( int iy = 1; iy < this->height; iy++ ) {
 		for ( int ix = 0; ix < this->width; ++ix ) {

@@ -35,6 +35,7 @@ class CSITerminal : public Terminal {
 
 		void apply_csi_color_vector(    CSICommandPair * pair );
 		void apply_csi_movement_vector( CSICommandPair * pair );
+		void apply_csi_erase_vector(    CSICommandPair * pair );
 	public:
 		CSITerminal();
 		CSITerminal(int width, int height);		

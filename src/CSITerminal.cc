@@ -105,8 +105,33 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			this->cY = y;
 
 			break;
-		 
 	 }
+}
+
+void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
+	char cmd = pair->first;
+	int offset = 0;
+	
+	switch ( cmd ) {
+		case 'J': /* Erase Data */
+			try {
+				offset = pair->second->at(0);
+			} catch ( std::out_of_range & oor ) {
+				/* Nada */
+			}
+			if ( offset == 0 ) {
+				this->erase_to_from( this->cX, this->cY,
+					this->width, this->height );
+			} else if ( offset == 1 ) {
+				this->erase_to_from( 0, 0, this->cX, this->cY );
+			} else if ( offset == 2 ) {
+				this->erase_to_from( 0, 0, this->width, this->height );
+			}
+			break;
+		default:
+			/* Humm. Odd. */
+			break;
+	}
 }
 
 void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
@@ -152,6 +177,9 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 			case 'G': /* CHA */
 			case 'H': /* CUP */
 				this->apply_csi_movement_vector(pair);
+				break;
+			case 'J': /* ED */
+				this->apply_csi_erase_vector(pair);
 				break;
 			default:
 				/* Damn! */

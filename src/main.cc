@@ -38,7 +38,7 @@ int main ( int argc, char ** argv ) {
 		Terminal * tCur;
 
 
-		for ( unsigned int i = 0; i < 3; ++i ) {
+		for ( unsigned int i = 0; i < 1; ++i ) {
 			Terminal           *  t  = new CSITerminal(80, 25);
 			RenderableTerminal *  rt = new RenderableTerminal(t);
 
