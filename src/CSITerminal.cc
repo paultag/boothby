@@ -80,6 +80,11 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			this->cY = ( this->cY - count ) <= 0 ?
 				0 : this->cY - count;
 			break;
+		case 'G': /* move to a col */
+			count = pair->second->at(0);
+			this->cX = count >= this->width ?
+				this->width : count;
+			break;
 		 
 	 }
 }
