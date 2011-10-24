@@ -54,6 +54,8 @@ void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
 			case 4:
 				ATTR_MOD_BOLD(this->cMode, 1);
 				break;
+			case 5:
+				ATTR_MOD_BLINK(this->cMode, 1);
 			default:
 				/* Unknown */
 				break;
@@ -109,10 +111,6 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 				csi_escape_parse( this->escape );
 			this->apply_csi_sequence( CSIEscapeSequence );
 		} catch ( int i ) { // XXX: Fixme
-			/* move(0,0);
-			printw("%s", this->escape);
-			refresh();
-			usleep(200000); */
 			/* Invalid char :( */
 		}
 		
