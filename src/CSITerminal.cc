@@ -96,9 +96,8 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 				y = 0;
 			}
 
-			x = x >= this->width ? this->width : x;
-			x = x <= 0           ? 0           : x;
-
+			x = x >= this->width  ? this->width  : x;
+			x = x <= 0            ? 0            : x;
 			y = y >= this->height ? this->height : y;
 			y = y <= 0            ? 0            : y;
 

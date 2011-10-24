@@ -31,21 +31,42 @@
 int main ( int argc, char ** argv ) {
 	init_screen();
 	try {
-		Terminal * t = new CSITerminal(80, 25);
-		RenderableTerminal rt(t);
-		rt.move_to(1, 1);
-		
+
+		std::vector<Terminal           *> TerminalStack;
+		std::vector<RenderableTerminal *> RTerminalStack;
+
+		Terminal * tCur;
+
+
+		for ( unsigned int i = 0; i < 3; ++i ) {
+			Terminal           *  t  = new CSITerminal(80, 25);
+			RenderableTerminal *  rt = new RenderableTerminal(t);
+
+			TerminalStack.push_back(t);
+			RTerminalStack.push_back(rt);
+
+			rt->move_to(i*3, i*5);
+			t->fork("bash");
+			tCur = t;
+		}
+
 		update_screen();
-		t->fork("bash");
-		
+
 		while ( true ) {
-			t->poke();
-			rt.render();
+
+			for ( unsigned int i = 0; i < TerminalStack.size(); ++i ) {
+				TerminalStack.at(i)->poke();
+			}
+
+			for ( unsigned int i = 0; i < RTerminalStack.size(); ++i ) {
+				RTerminalStack.at(i)->render();
+			}
+
 			update_screen();
 			timeout(0);
 			char ch = getch();
 			if ( ch != ERR )
-				t->type(ch);
+				tCur->type(ch);
 			usleep(2000);
 		}
 		uninit_screen();
