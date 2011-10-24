@@ -39,7 +39,27 @@ CSITerminal::CSITerminal( int width, int height ) {
 }
 
 void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
-	
+	/*
+	 * A - Up
+	 * B - Down
+	 * C - Forward
+	 * D - Backward
+	 * 
+	 * E - Next line
+	 * F - Prev line
+	 * G - Move to a given Horz
+	 * H - Move to a given X/Y
+	 */
+	 char cmd = pair->first;
+	 switch ( cmd ) {
+		 case 'A':
+			this->cY = this->cY <= 0 ? this->cY : this->cY-1;
+			break;
+		case 'B':
+			this->cY = this->cY >= this->height ? this->cY : this->cY+1; 
+			break;
+		 
+	 }
 }
 
 void CSITerminal::apply_csi_color_vector( CSICommandPair * pair ) {
