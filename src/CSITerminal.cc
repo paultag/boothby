@@ -52,13 +52,21 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 	 */
 	 char cmd = pair->first;
 	 switch ( cmd ) {
-		 case 'A':
+		 case 'A': /* mv c up */
 			this->cY = this->cY <= 0 ?
 				this->cY : this->cY - 1;
 			break;
-		case 'B':
+		case 'B': /* mv c down */
 			this->cY = this->cY >= this->height ?
 				this->cY : this->cY + 1; 
+			break;
+		case 'C': /* mv c fwd */
+			this->cX = this->cX >= this->width ?
+				this->cX : this->cX + 1;
+			break;
+		case 'D': /* mv c back */
+			this->cX = this->cX <= 0 ?
+				this->cX : this->cX - 1;
 			break;
 		 
 	 }
