@@ -53,7 +53,8 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 	 char cmd = pair->first;
 	 switch ( cmd ) {
 		 case 'A':
-			this->cY = this->cY <= 0 ? this->cY : this->cY - 1;
+			this->cY = this->cY <= 0 ?
+				this->cY : this->cY - 1;
 			break;
 		case 'B':
 			this->cY = this->cY >= this->height ?
