@@ -27,6 +27,7 @@
 
 #include <string.h>
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <map>
 
@@ -84,6 +85,26 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			count = pair->second->at(0);
 			this->cX = count >= this->width ?
 				this->width : count;
+			break;
+		case 'H': /* move to an X/Y */
+			int x = pair->second->at(0);
+			int y;
+
+			try { // XXX: Revise this
+				y = pair->second->at(1);
+			} catch ( std::out_of_range & oor ) {
+				y = 0;
+			}
+
+			x = x >= this->width ? this->width : x;
+			x = x <= 0           ? 0           : x;
+
+			y = y >= this->height ? this->height : y;
+			y = y <= 0            ? 0            : y;
+
+			this->cX = x;
+			this->cY = y;
+
 			break;
 		 
 	 }
