@@ -50,7 +50,8 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 	 * G - Move to a given Horz
 	 * H - Move to a given X/Y
 	 */
-	 char cmd = pair->first;
+	char cmd = pair->first;
+	int count = 0;
 	 switch ( cmd ) {
 		 case 'A': /* mv c up */
 			this->cY = this->cY <= 0 ?
@@ -70,9 +71,14 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			break;
 		/* OK. Enough with the easy ones */
 		case 'E': /* next N line(s) */
-			int count = pair->second->at(0);
+			count = pair->second->at(0);
 			this->cY = ( this->cY + count ) >= this->width ?
 				this->width : this->cY + count;
+			break;
+		case 'F': /* move up N lines */
+			count = pair->second->at(0);
+			this->cY = ( this->cY - count ) <= 0 ?
+				0 : this->cY - count;
 			break;
 		 
 	 }
