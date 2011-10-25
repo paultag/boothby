@@ -47,42 +47,21 @@ CSITerminal::CSITerminal( int width, int height ) {
 }
 
 void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
-	/*
-	 * A - Up
-	 * B - Down
-	 * C - Forward
-	 * D - Backward
-	 * 
-	 * E - Next line
-	 * F - Prev line
-	 * G - Move to a given Horz
-	 * H - Move to a given X/Y
-	 */
 	char cmd = pair->first;
 	int count = 0;
 	
+	/* ESC report */
 	String height = itos(this->height);
 	String width  = itos(this->width);
-	
-	char pre_escape[] = {
-		0x1B,
-		'[',
-		'\0'
-	};
-	char post_escape[] = {
-		'R',
-		'\0'
-	};
-	
+	char pre_escape[]  = { 0x1B, '[', '\0' };
+	char post_escape[] = { 'R', '\0' };
 	String escape_sequence = pre_escape + width + ';' + height + post_escape;
+	/* ESC report */
 	
 	 switch ( cmd ) {
 		 case 'n': /* Report status */
-			// Send a: ESC[n;mR
-			
 			for ( unsigned int i = 0; i < escape_sequence.length(); ++i )
 				this->type(escape_sequence[i]);
-			
 			break;
 		 case 'A': /* mv c up */
 			this->cY = this->cY <= 0 ?
@@ -99,6 +78,14 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 		case 'D': /* mv c back */
 			this->cX = this->cX <= 0 ?
 				this->cX : this->cX - 1;
+			break;
+		case 'd':
+			count = pair->second->at(0);
+			count = count >= this->height ? this->height - 1 : count;
+			count = count <= 0            ? 0                : count;
+			
+			this->cY = count;
+			
 			break;
 		/* OK. Enough with the easy ones */
 		case 'E': /* next N line(s) */
@@ -242,6 +229,7 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 			case 'B': /* CUD */
 			case 'C': /* CUF */
 			case 'D': /* CUB */
+			case 'd':
 			case 'E': /* CNL */
 			case 'F': /* CPL */
 			case 'G': /* CHA */
@@ -259,6 +247,7 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 				break;
 			default:
 				/* Damn! */
+				DEBUG(pair->first);
 				break;
 		}
 }
