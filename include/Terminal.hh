@@ -57,7 +57,8 @@ class Terminal {
 	/* Functions */
 
 		void erase_to_from( int iX, int iY, int tX, int tY );
-
+		void erase_small_range( int iX, int iY, int tX, int tY );
+		
 		void advance_curs();
 		void _init_Terminal( int width, int height );
 

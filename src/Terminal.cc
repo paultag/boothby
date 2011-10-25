@@ -67,6 +67,10 @@ Terminal::Terminal( int width, int height ) {
 	this->_init_Terminal(width, height);
 }
 
+void Terminal::erase_small_range( int iX, int iY, int tX, int tY ) {
+
+}
+
 void Terminal::erase_to_from( int iX, int iY, int tX, int tY ) {
 	for ( int iy = iY; iy < this->height; ++iy ) {
 		for ( int ix = iX; ix < this->width; ++ix ) {

@@ -128,8 +128,28 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 				this->erase_to_from( 0, 0, this->width, this->height );
 			}
 			break;
-		case 'K':
-			
+		case 'K': /* Erase in line */
+			try {
+				offset = pair->second->at(0);
+			} catch ( std::out_of_range & oor ) {
+				/* Nada */
+			}
+			/* Erases part of the line. If n is zero (or missing),
+			 * clear from cursor to the end of the line. If n is one,
+			 * clear from cursor to beginning of the line. If n is two,
+			 * clear entire line. Cursor position does not change. */
+			 
+			 if ( offset == 0 ) {
+				 this->erase_to_from( this->cX, this->cY,
+					this->width, this->cY );
+			 } else if ( offset == 1 ) {
+				 this->erase_to_from( 0, this->cY,
+					this->cX, this->cY );
+			 } else if ( offset == 2 ) {
+				 this->erase_to_from( 0, this->cY,
+					this->width, this->cY );
+			 }
+			 
 			break;
 		default:
 			/* Humm. Odd. */
