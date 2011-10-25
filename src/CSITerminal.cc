@@ -47,90 +47,9 @@ CSITerminal::CSITerminal( int width, int height ) {
 }
 
 void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
-	char cmd = pair->first;
-	int count = 0;
-	
-	 switch ( cmd ) {
-		 case 'A': /* mv c up */
-			this->cY = this->cY <= 0 ?
-				this->cY : this->cY - 1;
-			break;
-		case 'B': /* mv c down */
-			this->cY = this->cY >= this->height ?
-				this->cY : this->cY + 1; 
-			break;
-		case 'C': /* mv c fwd */
-			this->cX = this->cX >= this->width ?
-				this->cX : this->cX + 1;
-			break;
-		case 'D': /* mv c back */
-			this->cX = this->cX <= 0 ?
-				this->cX : this->cX - 1;
-			break;
-		case 'd':
-			count = pair->second->at(0);
-			count = count >= this->height ? this->height - 1 : count;
-			count = count <= 0            ? 0                : count;
-			
-			this->cY = count;
-			
-			break;
-		/* OK. Enough with the easy ones */
-		case 'E': /* next N line(s) */
-			count = pair->second->at(0);
-			this->cY = ( this->cY + count ) >= this->width ?
-				this->width : this->cY + count;
-			break;
-		case 'F': /* move up N lines */
-			count = pair->second->at(0);
-			this->cY = ( this->cY - count ) <= 0 ?
-				0 : this->cY - count;
-			break;
-		case 'G': /* move to a col */
-			count = pair->second->at(0);
-			this->cX = count >= this->width ?
-				this->width : count;
-			break;
-		case 'f': /* Same as CUP */
-		case 'H': /* move to an X/Y */
-			int x = pair->second->at(0);
-			int y;
-
-			try { // XXX: Revise this
-				y = pair->second->at(1);
-			} catch ( std::out_of_range & oor ) {
-				y = 0;
-			}
-
-			x = x >= this->width  ? this->width  : x;
-			x = x <= 0            ? 0            : x;
-			y = y >= this->height ? this->height : y;
-			y = y <= 0            ? 0            : y;
-
-			this->cX = x;
-			this->cY = y;
-
-			break;
-	 }
 }
 
 void CSITerminal::apply_csi_decstbm_vector( CSICommandPair * pair ) {
-	char cmd = pair->first;
-	int low  = 0;
-	int top  = 0;
-	
-	switch ( cmd ) {
-		case 'r':
-			try {
-				top = pair->second->at(0);
-				low = pair->second->at(1);
-				
-				this->scrollframe_floor = low;
-				this->scrollframe_top   = top;
-				
-			} catch ( std::out_of_range & oor ) {}
-			break;
-	}
 }
 
 void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
@@ -138,38 +57,54 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 	int offset = 0;
 	
 	switch ( cmd ) {
-		case 'J': /* Erase Data */
+		case 'J':
+			/* Clears part of the screen.
+			 *
+			 *  - If n is zero (or missing), clear from cursor to
+			 *    end of screen.
+			 *
+			 *  - If n is one, clear from cursor to beginning of
+			 *    the screen.
+			 *
+			 *  - If n is two, clear entire screen (and moves
+			 *    cursor to upper left on MS-DOS ANSI.SYS). */
 			try {
 				offset = pair->second->at(0);
-			} catch ( std::out_of_range & oor ) {
-				/* Nada */
-			}
+			} catch ( std::out_of_range & oor ) {}
 			if ( offset == 0 ) {
 				this->erase_to_from( this->cX, this->cY,
 					this->width, this->height );
 			} else if ( offset == 1 ) {
 				this->erase_to_from( 0, 0, this->cX, this->cY );
 			} else if ( offset == 2 ) {
-				this->erase_to_from( 0, 0, this->width, this->height );
+				this->erase_to_from( 0, 0, this->width,
+				this->height );
 			}
 			break;
-		case 'K': /* Erase in line */
+		case 'K':
 			try {
 				offset = pair->second->at(0);
-			} catch ( std::out_of_range & oor ) {
-				/* Nada */
-			}
+			} catch ( std::out_of_range & oor ) {}
 			/* Erases part of the line. If n is zero (or missing),
-			 * clear from cursor to the end of the line. If n is one,
-			 * clear from cursor to beginning of the line. If n is two,
-			 * clear entire line. Cursor position does not change. */
+			 *
+			 *  - clear from cursor to the end of the line.
+			 *
+			 *  - If n is one, clear from cursor to beginning of the
+			 *    line.
+			 *
+			 *  - If n is two, clear entire line.
+			 *
+			 * Cursor position does not change. */
 			 
 			 if ( offset == 0 ) {
-				 this->erase_small_range(this->cX, this->width);
+				 this->erase_to_from(this->cX, this->cY,
+					this->width, this->cY);
 			 } else if ( offset == 1 ) {
-				 this->erase_small_range(0, this->cX);
+				 this->erase_to_from(0, this->cY,
+					this->cX, this->cY);
 			 } else if ( offset == 2 ) {
-				 this->erase_small_range(0, this->width);
+				 this->erase_to_from(0, this->cY,
+					this->cY, this->width);
 			 }
 			 
 			break;

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-echo "[31;1mHello, World[0m"
 
-echo "A[AAB[BBC[CCD[DD"
-
+echo "Beginning[2BThird line[1ASecond Line[1B"
 echo ""
 echo ""
-
-echo "Hello, [1KWorld!"
+echo "[9CC[3DB[3DA"
+echo ""
+echo ""
+echo "Hello, World![1K <- This is blank"
