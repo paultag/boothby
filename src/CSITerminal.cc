@@ -370,6 +370,5 @@ bool CSITerminal::handle_special_char( unsigned char c ) {
 void CSITerminal::insert( unsigned char c ) {
 	if ( this->handle_special_char(c) )
 		return;
-	std::cerr << c;
 	Terminal::insert(c);
 }
