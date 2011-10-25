@@ -25,6 +25,7 @@
 
 #define String std::string
 
+#define DEBUG(x) std::cerr << x << std::endl;
 
 void init_screen();
 void uninit_screen();

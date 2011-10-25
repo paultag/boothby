@@ -79,7 +79,7 @@ void Terminal::erase_small_range( int from, int to ) {
 }
 
 void Terminal::erase_to_from( int iX, int iY, int tX, int tY ) {
-	for ( int iy = iY; iy < this->height; ++iy ) {
+	for ( int iy = iY; iy < this->height; ++iy ) { // XXX: This needs a revamp
 		for ( int ix = iX; ix < this->width; ++ix ) {
 			int c = (( this->width * iy ) + ix );
 			this->chars[c].ch   = ' ';
