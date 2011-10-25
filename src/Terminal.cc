@@ -72,12 +72,20 @@ Terminal::Terminal( int width, int height ) {
 
 void Terminal::erase_to_from( int iX, int iY, int tX, int tY ) {
 
+	iY--;
+	tY--;
+
 	int from = (( this->width * iY ) + iX );
 	int to   = (( this->width * tY ) + tX );
 
-	for ( ; from > to; --from ) {
-		this->chars[to].ch   = ' ';
-		this->chars[to].attr = 0x70;
+	DEBUG("ERASE")
+	DEBUG(this->width * this->height)
+	DEBUG(from)
+	DEBUG(to)
+
+	for ( int i = from ; i < to; ++i ) {
+		this->chars[i].ch   = ' ';
+		this->chars[i].attr = 0x70;
 	}
 }
 

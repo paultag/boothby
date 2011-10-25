@@ -73,6 +73,10 @@ void CSIStateNumber::process( char c ) {
 
 		/* "Commit" the pending char */
 		int n = atoi(csi_state_number_pending.c_str());
+
+		if ( csi_state_number_pending == "" )
+			n = -1;
+
 		csi_state_number_queue.insert(csi_state_number_queue.end(), n);
 		csi_state_number_pending = "";
 		csi_machine_next_state = csi_state_entry;
@@ -85,6 +89,9 @@ void CSIStateNumber::process( char c ) {
 	} else if ( c == ';' ) {
 		/* "Commit" the pending char */
 		int n = atoi(csi_state_number_pending.c_str());
+		if ( csi_state_number_pending == "" )
+			n = -1;
+
 		csi_state_number_queue.insert(csi_state_number_queue.end(), n);
 		csi_state_number_pending = "";
 	} else {

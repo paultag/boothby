@@ -55,9 +55,14 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 
 	try {
 		p1 = pair->second->at(0);
+		DEBUG("p1 parsed")
 		p2 = pair->second->at(1);
+		DEBUG("p2 parsed")
 	} catch ( std::out_of_range & oor ) {}
 
+	DEBUG(pair->first)
+	DEBUG(p1);
+	DEBUG(p2);
 
 	switch ( pair->first ) {
 		case 'A':
@@ -90,10 +95,17 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			 * (top left corner) if omitted. A sequence such as
 			 * CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H
 			 * is the same as CSI 17H and CSI 17;1H */
-			newY = p1;
-			newX = p2;
+			if ( p1 == -1 )
+				p1 = 1;
+			if ( p2 == -1 )
+				p2 = 1;
+
+			newY = p1 - 1;
+			newX = p2 - 1;
+
 			break;
 		default:
+			DEBUG("Unknown move command");
 			return;
 			break;
 	}
@@ -103,6 +115,8 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 
 	newY = newY > this->height ? this->height - 1 : newY;
 	newY = newY < 0            ? 0                : newY;
+
+	DEBUG("Moving to: " << newX << ", " << newY);
 
 	this->cX = newX;
 	this->cY = newY;
@@ -131,9 +145,19 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 			try {
 				offset = pair->second->at(0);
 			} catch ( std::out_of_range & oor ) {}
+
+			DEBUG(offset)
+
+			if ( offset == -1 )
+				offset = 0;
+
+			DEBUG(offset)
+
 			if ( offset == 0 ) {
 				this->erase_to_from( this->cX, this->cY,
 					this->width, this->height );
+				DEBUG("Erasing from/to: " << this->cX << ", " << this->cY <<
+					" | " << this->width << ", " << this->height)
 			} else if ( offset == 1 ) {
 				this->erase_to_from( 0, 0, this->cX, this->cY );
 			} else if ( offset == 2 ) {
@@ -229,7 +253,6 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 				break;
 			default:
 				/* Damn! */
-				DEBUG(pair->first);
 				break;
 		}
 }
@@ -266,6 +289,7 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 		try {
 			CSICommandPair * CSIEscapeSequence = 
 				csi_escape_parse( this->escape );
+			DEBUG(this->escape);
 			this->apply_csi_sequence( CSIEscapeSequence );
 		} catch ( int i ) { // XXX: Fixme
 			/* Invalid char :( */
