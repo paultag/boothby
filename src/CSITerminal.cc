@@ -109,6 +109,25 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 	 }
 }
 
+void CSITerminal::apply_csi_decstbm_vector( CSICommandPair * pair ) {
+	char cmd = pair->first;
+	int low  = 0;
+	int top  = 0;
+	
+	switch ( cmd ) {
+		case 'r':
+			try {
+				top = pair->second->at(0);
+				low = pair->second->at(1);
+				
+				this->scrollframe_floor = low;
+				this->scrollframe_top   = top;
+				
+			} catch ( std::out_of_range & oor ) {}
+			break;
+	}
+}
+
 void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 	char cmd = pair->first;
 	int offset = 0;
@@ -203,6 +222,9 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 			case 'J': /* ED */
 			case 'K': /* EL */
 				this->apply_csi_erase_vector(pair);
+				break;
+			case 'r':
+				this->apply_csi_decstbm_vector(pair);
 				break;
 			default:
 				/* Damn! */
