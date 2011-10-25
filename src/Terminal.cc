@@ -39,6 +39,9 @@ void Terminal::_init_Terminal(int width, int height) {
 	this->cY     = 0;
 	this->cMode  = 0x70; // 112
 
+	this->scrollframe_floor = this->height;
+	this->scrollframe_top   = 0;
+
 	this->pty    = -1;
 
 	this->special   = false;
@@ -86,7 +89,11 @@ void Terminal::erase_to_from( int iX, int iY, int tX, int tY ) {
 }
 
 void Terminal::scroll_up() {
-	for ( int iy = 1; iy < this->height; iy++ ) {
+	for (
+		int iy = this->scrollframe_top + 1;
+		iy < this->scrollframe_floor;
+		iy++
+	) {
 		for ( int ix = 0; ix < this->width; ++ix ) {
 			int thisChar = (( this->width *   iy      ) + ix );
 			int lastChar = (( this->width * ( iy - 1 )) + ix );
@@ -95,7 +102,7 @@ void Terminal::scroll_up() {
 		}
 	}
 	for ( int ix = 0; ix < this->width; ++ix ) {
-		int offset = ((this->width * (this->height - 1)) + ix);
+		int offset = ((this->width * (this->scrollframe_floor - 1)) + ix);
 		this->chars[offset].ch = ' ';
 		this->chars[offset].attr = 0x70;
 	}

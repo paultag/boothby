@@ -42,6 +42,9 @@ class Terminal {
 		int width;
 		int height;
 
+		int scrollframe_top;
+		int scrollframe_floor;
+
 		int cX;
 		int cY;
 		
