@@ -40,13 +40,73 @@ String itos( int number ) {
 
 CSITerminal::CSITerminal() {
 	this->_init_Terminal(80, 25);
-	/*                   ^^^^^^ good guess :) */
 }
 CSITerminal::CSITerminal( int width, int height ) {
 	this->_init_Terminal(width, height);
 }
 
 void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
+
+	int newX = this->cX;
+	int newY = this->cY;
+
+	int p1 = 1;
+	int p2 = 1;
+
+	try {
+		p1 = pair->second->at(0);
+		p2 = pair->second->at(1);
+	} catch ( std::out_of_range & oor ) {}
+
+
+	switch ( pair->first ) {
+		case 'A':
+			newY--;
+		case 'B':
+			newY++;
+		case 'C':
+			newX++;
+		case 'D':
+			newX--;
+			/* Moves the cursor n (default 1) cells in the given
+			 * direction. If the cursor is already at the edge of
+			 * the screen, this has no effect. */
+		case 'E':
+			newX = 0;
+			newY = newY + p1;
+			/* Moves cursor to beginning of the line n
+			 * (default 1) lines down. */
+		case 'F':
+			newX = 0;
+			newY = newY - p1;
+			/* Moves cursor to beginning of the line n (default 1)
+			 * lines up. */
+		case 'G':
+			/* Moves the cursor to column n. */
+			newX = p1;
+		case 'H':
+			/* Moves the cursor to row n, column m.
+			 * The values are 1-based, and default to 1
+			 * (top left corner) if omitted. A sequence such as
+			 * CSI ;5H is a synonym for CSI 1;5H as well as CSI 17;H
+			 * is the same as CSI 17H and CSI 17;1H */
+			newY = p1;
+			newX = p2;
+			break;
+		default:
+			return;
+			break;
+	}
+
+	newX = newX > this->width  ? this->width - 1  : newX;
+	newX = newX < 0            ? 0                : newX;
+
+	newY = newY > this->height ? this->height - 1 : newY;
+	newY = newY < 0            ? 0                : newY;
+
+	this->cX = newX;
+	this->cY = newY;
+
 }
 
 void CSITerminal::apply_csi_decstbm_vector( CSICommandPair * pair ) {
