@@ -140,14 +140,11 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 			 * clear entire line. Cursor position does not change. */
 			 
 			 if ( offset == 0 ) {
-				 this->erase_small_range( this->cX, this->cY,
-					this->width, this->cY );
+				 this->erase_small_range(this->cX, this->width);
 			 } else if ( offset == 1 ) {
-				 this->erase_small_range( 0, this->cY,
-					this->cX, this->cY );
+				 this->erase_small_range(0, this->cX);
 			 } else if ( offset == 2 ) {
-				 this->erase_small_range( 0, this->cY,
-					this->width, this->cY );
+				 this->erase_small_range(0, this->width);
 			 }
 			 
 			break;
@@ -202,6 +199,7 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 				this->apply_csi_movement_vector(pair);
 				break;
 			case 'J': /* ED */
+			case 'K': /* EL */
 				this->apply_csi_erase_vector(pair);
 				break;
 			default:
