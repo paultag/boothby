@@ -306,6 +306,9 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 bool CSITerminal::handle_graph_char( unsigned char c ) {
 	return false;
 }
+
+#define _GET_AT_OFFSET ((this->cY * this->width) + this->cX)
+
 bool CSITerminal::handle_control_char( unsigned char c ) { /* XXX: Move this to Terminal */
 	switch ( c ) {
 		case '\n': /* newline */
@@ -315,7 +318,9 @@ bool CSITerminal::handle_control_char( unsigned char c ) { /* XXX: Move this to 
 			break;
 		case '\b': /* backspace */
 			if ( this->cX )
-				this->cX--;
+				this->cX--; // XXX: Beginning of line?
+			this->chars[_GET_AT_OFFSET].attr = 0x70;
+			this->chars[_GET_AT_OFFSET].ch   = ' '; // XXX: Is this right?
 			return true;
 			break;
 		case '\t': /* tab */
