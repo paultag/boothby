@@ -55,40 +55,41 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 
 	try {
 		p1 = pair->second->at(0);
-		DEBUG("p1 parsed")
 		p2 = pair->second->at(1);
-		DEBUG("p2 parsed")
 	} catch ( std::out_of_range & oor ) {}
-
-	DEBUG(pair->first)
-	DEBUG(p1);
-	DEBUG(p2);
 
 	switch ( pair->first ) {
 		case 'A':
-			newY--;
+			newY = newY - p1;
+			break;
 		case 'B':
-			newY++;
+			newY = newY + p1;
+			break;
 		case 'C':
-			newX++;
+			newX = newX + p1;
+			break;
 		case 'D':
-			newX--;
+			newX = newX - p1;
+			break;
 			/* Moves the cursor n (default 1) cells in the given
 			 * direction. If the cursor is already at the edge of
 			 * the screen, this has no effect. */
 		case 'E':
 			newX = 0;
 			newY = newY + p1;
+			break;
 			/* Moves cursor to beginning of the line n
 			 * (default 1) lines down. */
 		case 'F':
 			newX = 0;
 			newY = newY - p1;
+			break;
 			/* Moves cursor to beginning of the line n (default 1)
 			 * lines up. */
 		case 'G':
 			/* Moves the cursor to column n. */
 			newX = p1;
+			break;
 		case 'H':
 			/* Moves the cursor to row n, column m.
 			 * The values are 1-based, and default to 1
@@ -105,18 +106,18 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 
 			break;
 		default:
-			DEBUG("Unknown move command");
 			return;
 			break;
 	}
 
-	newX = newX > this->width  ? this->width - 1  : newX;
-	newX = newX < 0            ? 0                : newX;
-
-	newY = newY > this->height ? this->height - 1 : newY;
-	newY = newY < 0            ? 0                : newY;
-
-	DEBUG("Moving to: " << newX << ", " << newY);
+	if ( newX > this->width - 1 )
+		newX = this->width - 1;
+	if ( newX < 0 )
+		newX = 0;
+	if ( newY > this->height - 1 )
+		newY = this->height - 1;
+	if ( newY < 0 )
+		newY = 0;
 
 	this->cX = newX;
 	this->cY = newY;
@@ -146,22 +147,16 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 				offset = pair->second->at(0);
 			} catch ( std::out_of_range & oor ) {}
 
-			DEBUG(offset)
-
 			if ( offset == -1 )
 				offset = 0;
 
-			DEBUG(offset)
-
 			if ( offset == 0 ) {
-				this->erase_to_from( this->cX, this->cY,
+				this->erase_to_from( this->cX + 1, this->cY + 1,
 					this->width, this->height );
-				DEBUG("Erasing from/to: " << this->cX << ", " << this->cY <<
-					" | " << this->width << ", " << this->height)
 			} else if ( offset == 1 ) {
-				this->erase_to_from( 0, 0, this->cX, this->cY );
+				this->erase_to_from( 1, 1, this->cX, this->cY );
 			} else if ( offset == 2 ) {
-				this->erase_to_from( 0, 0, this->width,
+				this->erase_to_from( 1, 1, this->width,
 				this->height );
 			}
 			break;
@@ -181,14 +176,14 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 			 * Cursor position does not change. */
 			 
 			 if ( offset == 0 ) {
-				 this->erase_to_from(this->cX, this->cY,
-					this->width, this->cY);
+				 this->erase_to_from(this->cX + 1, this->cY + 1,
+					this->width, this->cY + 1);
 			 } else if ( offset == 1 ) {
-				 this->erase_to_from(0, this->cY,
-					this->cX, this->cY);
+				 this->erase_to_from(1, this->cY + 1,
+					this->cX + 1, this->cY + 1);
 			 } else if ( offset == 2 ) {
-				 this->erase_to_from(0, this->cY,
-					this->cY, this->width);
+				 this->erase_to_from(1, this->cY + 1,
+					this->cY + 1, this->width);
 			 }
 			 
 			break;
@@ -289,7 +284,6 @@ bool CSITerminal::handle_escape_char( unsigned char c ) {
 		try {
 			CSICommandPair * CSIEscapeSequence = 
 				csi_escape_parse( this->escape );
-			DEBUG(this->escape);
 			this->apply_csi_sequence( CSIEscapeSequence );
 		} catch ( int i ) { // XXX: Fixme
 			/* Invalid char :( */
