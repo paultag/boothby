@@ -50,19 +50,7 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 	char cmd = pair->first;
 	int count = 0;
 	
-	/* ESC report */
-	String height = itos(this->height);
-	String width  = itos(this->width);
-	char pre_escape[]  = { 0x1B, '[', '\0' };
-	char post_escape[] = { 'R', '\0' };
-	String escape_sequence = pre_escape + width + ';' + height + post_escape;
-	/* ESC report */
-	
 	 switch ( cmd ) {
-		 case 'n': /* Report status */
-			for ( unsigned int i = 0; i < escape_sequence.length(); ++i )
-				this->type(escape_sequence[i]);
-			break;
 		 case 'A': /* mv c up */
 			this->cY = this->cY <= 0 ?
 				this->cY : this->cY - 1;
@@ -235,7 +223,6 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 			case 'G': /* CHA */
 			case 'H': /* CUP */
 			case 'f': /* Same as CUP */
-			case 'n': /* REPORT! */
 				this->apply_csi_movement_vector(pair);
 				break;
 			case 'J': /* ED */
