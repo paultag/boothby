@@ -140,13 +140,13 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 			 * clear entire line. Cursor position does not change. */
 			 
 			 if ( offset == 0 ) {
-				 this->erase_to_from( this->cX, this->cY,
+				 this->erase_small_range( this->cX, this->cY,
 					this->width, this->cY );
 			 } else if ( offset == 1 ) {
-				 this->erase_to_from( 0, this->cY,
+				 this->erase_small_range( 0, this->cY,
 					this->cX, this->cY );
 			 } else if ( offset == 2 ) {
-				 this->erase_to_from( 0, this->cY,
+				 this->erase_small_range( 0, this->cY,
 					this->width, this->cY );
 			 }
 			 
