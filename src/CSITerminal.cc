@@ -131,9 +131,12 @@ void CSITerminal::apply_csi_decstbm_vector( CSICommandPair * pair ) {
 void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 	char cmd = pair->first;
 	int offset = 0;
+
+	DEBUG("Erase called")
 	
 	switch ( cmd ) {
 		case 'J':
+			DEBUG("Type J")
 			/* Clears part of the screen.
 			 *
 			 *  - If n is zero (or missing), clear from cursor to
@@ -162,6 +165,7 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 			}
 			break;
 		case 'K':
+			DEBUG("Type K")
 			try {
 				offset = pair->second->at(0);
 			} catch ( std::out_of_range & oor ) {}
@@ -175,20 +179,25 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 			 *  - If n is two, clear entire line.
 			 *
 			 * Cursor position does not change. */
-			 
-			 if ( offset == 0 ) {
+			
+			DEBUG(offset)
+			if ( offset == -1 )
+				offset = 0;
+ 
+			if ( offset == 0 ) {
 				 this->erase_to_from(this->cX + 1, this->cY + 1,
 					this->width, this->cY + 1);
-			 } else if ( offset == 1 ) {
+			} else if ( offset == 1 ) {
 				 this->erase_to_from(1, this->cY + 1,
 					this->cX + 1, this->cY + 1);
-			 } else if ( offset == 2 ) {
+			} else if ( offset == 2 ) {
 				 this->erase_to_from(1, this->cY + 1,
 					this->cY + 1, this->width);
-			 }
+			}
 			 
 			break;
 		default:
+			DEBUG("Unknwon erase")
 			/* Humm. Odd. */
 			break;
 	}
