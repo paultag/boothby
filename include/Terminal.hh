@@ -55,7 +55,6 @@ class Terminal {
 		pid_t  childpid;
 
 	/* Functions */
-
 		void erase_to_from( int iX, int iY, int tX, int tY );
 		void erase_small_range( int from, int to );
 		
@@ -75,7 +74,6 @@ class Terminal {
 
 		int get_width();
 		int get_height();
-		
 };
 
 #endif

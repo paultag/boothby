@@ -86,6 +86,7 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			this->cX = count >= this->width ?
 				this->width : count;
 			break;
+		case 'f': /* Same as CUP */
 		case 'H': /* move to an X/Y */
 			int x = pair->second->at(0);
 			int y;
@@ -196,6 +197,7 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 			case 'F': /* CPL */
 			case 'G': /* CHA */
 			case 'H': /* CUP */
+			case 'f': /* Same as CUP */
 				this->apply_csi_movement_vector(pair);
 				break;
 			case 'J': /* ED */
@@ -204,6 +206,7 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 				break;
 			default:
 				/* Damn! */
+				std::cerr << "Failout: " << pair->first << std::endl;
 				break;
 		}
 }
