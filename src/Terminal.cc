@@ -78,6 +78,8 @@ void Terminal::erase_to_from( int iX, int iY, int tX, int tY ) {
 	int from = (( this->width * iY ) + iX );
 	int to   = (( this->width * tY ) + tX );
 
+	DEBUG("Erasing from / to: " << from << ", " << to)
+
 	for ( int i = from - 1; i < to; ++i ) {
 		this->chars[i].ch   = ' ';
 		this->chars[i].attr = 0x70;
@@ -152,7 +154,7 @@ pid_t Terminal::fork( const char * command ) {
 
 	if (childpid == 0) {
 		setenv("TERM", TERMINAL_ENV_NAME, 1);
-		execl("/bin/sh", "/bin/sh", "-c", command, NULL);
+		execl("/bin/sh", "/bin/sh", "-c", command, NULL); // XXX: Choose shell better
 		std::cerr << "Oh, crap. Failed to fork." << std::endl;
 		exit(127);
 	}

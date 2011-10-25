@@ -80,6 +80,7 @@ void CSITerminal::apply_csi_movement_vector( CSICommandPair * pair ) {
 			break;
 			/* Moves cursor to beginning of the line n
 			 * (default 1) lines down. */
+		case 'd':
 		case 'F':
 			newX = 0;
 			newY = newY - p1;
@@ -247,6 +248,7 @@ void CSITerminal::apply_csi_sequence( CSICommandPair * pair ) {
 				this->apply_csi_decstbm_vector(pair);
 				break;
 			default:
+				DEBUG("UH: " << pair->first)
 				/* Damn! */
 				break;
 		}
@@ -308,6 +310,7 @@ bool CSITerminal::handle_graph_char( unsigned char c ) {
 }
 
 #define _GET_AT_OFFSET ((this->cY * this->width) + this->cX)
+/* XXX: FIXME ^ */
 
 bool CSITerminal::handle_control_char( unsigned char c ) { /* XXX: Move this to Terminal */
 	switch ( c ) {
@@ -367,5 +370,6 @@ bool CSITerminal::handle_special_char( unsigned char c ) {
 void CSITerminal::insert( unsigned char c ) {
 	if ( this->handle_special_char(c) )
 		return;
+	std::cerr << c;
 	Terminal::insert(c);
 }
