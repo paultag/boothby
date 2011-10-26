@@ -192,7 +192,7 @@ void CSITerminal::apply_csi_erase_vector( CSICommandPair * pair ) {
 					this->cX + 1, this->cY + 1);
 			} else if ( offset == 2 ) {
 				 this->erase_to_from(1, this->cY + 1,
-					this->cY + 1, this->width);
+					this->width, this->cY + 1);
 			}
 			 
 			break;
