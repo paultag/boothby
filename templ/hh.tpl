@@ -8,7 +8,7 @@
 #ifndef .DEFNAME.
 #define .DEFNAME. I_CAN_HAS
 
-class .CLASSNAME. : public Object {
+class .CLASSNAME. {
 	protected:
 
 	public:
