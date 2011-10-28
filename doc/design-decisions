@@ -1,0 +1,8 @@
+
+
+VTELib  - Create a full CSI/UTF-8 compatable VTE library that manages a segment
+          of memory full of sane and sensable structs.
+
+NC-VTE  - Render that memory block in ncurses in a sane, sensable way.
+
+Boothby - Implement Boothby on top of NC-VTE.
