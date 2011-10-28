@@ -1,7 +1,11 @@
+
+TEMPLATE=./templ
+SRC=./src
+INC=./include
+
 all:
-	cd src/ && make
-clean:
-	cd src/ && make clean
-	rm -rf bin/*
-test: all
-	./bin/boothby 2>log
+	@echo "Stub"
+
+newobj:
+	$(TEMPLATE)/gen-src $(name) > $(SRC)/$(name).cc
+	$(TEMPLATE)/gen-inc $(name) > $(INC)/$(name).hh
